@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: 2003
+      POSTGRES_DB: netflix-clone
+    ports:
+      - 3003:5432
+    volumes:
+      - netflix-postgres-data:/var/lib/postgresql/data
+
+volumes:
+  netflix-postgres-data:

@@ -51,6 +51,7 @@ export class User {
 
   @OneToMany(() => Profile, (profile) => profile.user)
   profiles: Profile[];
+
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
   @UpdateDateColumn({ type: 'timestamp' })

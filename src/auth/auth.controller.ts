@@ -1,4 +1,10 @@
-import { Controller, Post, Body, UnauthorizedException } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  UnauthorizedException,
+  Request,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Public } from './decorators/custompublic';
 
@@ -8,8 +14,8 @@ export class AuthController {
 
   @Public()
   @Post('login')
-  async login(@Body() body: { username: string; password: string }) {
-    return this.authService.login(body.username, body.password);
+  async login(@Body() body: { email: string; password: string }) {
+    return this.authService.login(body.email, body.password);
   }
   @Post('refresh')
   async RefreshToken(@Body() body: { refreshToken: string }) {

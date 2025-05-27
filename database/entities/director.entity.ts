@@ -8,7 +8,7 @@ import {
 } from 'typeorm';
 import { Movie } from './movie.entity';
 
-@Entity()
+@Entity('directors')
 export class Director {
   @PrimaryGeneratedColumn()
   id: number;
@@ -16,7 +16,7 @@ export class Director {
   @Column()
   name: string;
   @Column()
-  desceription: string;
+  description: string;
   @Column({ nullable: true })
   photoUrl: string;
 
@@ -25,6 +25,7 @@ export class Director {
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
+
   @UpdateDateColumn({ type: 'timestamp' })
   updatedAt: Date;
 }

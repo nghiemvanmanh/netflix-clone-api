@@ -3,7 +3,6 @@ import { JwtService } from '@nestjs/jwt';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { JwtAuthGuard } from './auth/guard/auth.guard';
 import { ValidationPipe } from '@nestjs/common';
-
 import * as cookieParser from 'cookie-parser';
 import { AppModule } from './app/app.module';
 import { RefreshToken } from 'database/entities/refresh-token.entity';

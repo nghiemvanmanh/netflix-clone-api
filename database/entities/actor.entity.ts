@@ -15,8 +15,10 @@ export class Actor {
 
   @Column()
   name: string;
+
   @Column()
-  desceription: string;
+  description: string;
+
   @Column({ nullable: true })
   photoUrl: string;
 
@@ -25,6 +27,7 @@ export class Actor {
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
+
   @UpdateDateColumn({ type: 'timestamp' })
   updatedAt: Date;
 }

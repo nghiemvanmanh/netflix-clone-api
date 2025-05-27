@@ -40,7 +40,11 @@ export class AuthService {
           token: refreshToken,
           expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
         });
-        return { accessToken: accessToken, refreshToken: refreshToken };
+        return {
+          user: user,
+          accessToken: accessToken,
+          refreshToken: refreshToken,
+        };
       }
     }
     throw new UnauthorizedException('Incorrect account or password');

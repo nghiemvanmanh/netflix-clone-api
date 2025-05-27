@@ -4,10 +4,10 @@
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from 'node_modules/@nestjs/typeorm';
-import { Repository } from 'node_modules/typeorm';
 import { User } from 'database/entities/user.entity';
 import { ConfigService } from '@nestjs/config';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 type JwtPayload = {
   id: number;
   email: string;

@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { ProfileService } from './profile.service';
-import { ProfileController } from './profile.controller';
+import { ProfilesService } from './profiles.service';
+import { ProfilesController } from './profiles.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Profile } from 'database/entities/profile.entity';
 
@@ -9,8 +9,8 @@ import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Profile, User]), AuthModule],
-  controllers: [ProfileController],
-  providers: [ProfileService],
-  exports: [ProfileService],
+  controllers: [ProfilesController],
+  providers: [ProfilesService],
+  exports: [ProfilesService],
 })
-export class ProfileModule {}
+export class ProfilesModule {}

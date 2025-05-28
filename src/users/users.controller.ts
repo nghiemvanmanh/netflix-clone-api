@@ -8,7 +8,7 @@ import {
   UseGuards,
   Delete,
 } from '@nestjs/common';
-import { UserService } from './user.service';
+import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { Public } from 'src/auth/decorators/custompublic';
 import { User } from 'database/entities/user.entity';
@@ -17,32 +17,32 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { UserGuard } from 'src/auth/guard/user.guard';
 import { AdminGuard } from 'src/auth/guard/admin.guard';
 
-@Controller('user')
-export class UserController {
+@Controller('users')
+export class UsersController {
   constructor(
-    private readonly userService: UserService,
+    private readonly usersService: UsersService,
     private readonly authService: AuthService,
   ) {}
 
   @Public()
-  @Post('register')
+  @Post()
   async register(@Body() newUSer: CreateUserDto): Promise<User> {
-    return await this.userService.register(newUSer);
+    return await this.usersService.register(newUSer);
   }
 
   @UseGuards(UserGuard)
   @UseGuards(AdminGuard)
-  @Put('update')
+  @Put()
   async update(
     @Param('id') id: number,
     @Body() updateUser: UpdateUserDto,
   ): Promise<User> {
-    return await this.userService.update(id, updateUser);
+    return await this.usersService.update(id, updateUser);
   }
 
   @UseGuards(AdminGuard)
-  @Delete('delete')
+  @Delete()
   async delete(@Param('id') id: number) {
-    return await this.userService.delete(id);
+    return await this.usersService.delete(id);
   }
 }

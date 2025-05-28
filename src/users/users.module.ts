@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { UserService } from './user.service';
-import { UserController } from './user.controller';
+import { UsersService } from './users.service';
+import { UsersController } from './users.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from 'database/entities/user.entity';
 import { AuthModule } from 'src/auth/auth.module';
@@ -10,8 +10,8 @@ import { AuthModule } from 'src/auth/auth.module';
     TypeOrmModule.forFeature([User]),
     AuthModule, // Import AuthModule vào đây để dùng AuthService và JwtService
   ],
-  controllers: [UserController],
-  providers: [UserService],
-  exports: [UserService],
+  controllers: [UsersController],
+  providers: [UsersService],
+  exports: [UsersService],
 })
-export class UserModule {}
+export class UsersModule {}

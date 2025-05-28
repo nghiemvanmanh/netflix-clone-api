@@ -3,23 +3,23 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
+  Put,
 } from '@nestjs/common';
-import { DirectorService } from './director.service';
+import { DirectorsService } from './directors.service';
 import { CreateDirectorDto } from './dto/create-director.dto';
 import { UpdateDirectorDto } from './dto/update-director.dto';
 
-@Controller('director')
-export class DirectorController {
-  constructor(private readonly directorService: DirectorService) {}
+@Controller('directors')
+export class DirectorsController {
+  constructor(private readonly directorService: DirectorsService) {}
 
-  @Post('create')
-  create(@Body() createDirectorDto: CreateDirectorDto) {
+  @Post()
+  create(@Body() createDirectorDto: CreateDirectorDto[]) {
     return this.directorService.create(createDirectorDto);
   }
-  @Patch(':id')
+  @Put(':id')
   update(
     @Param('id') id: string,
     @Body() updateDirectorDto: UpdateDirectorDto,
@@ -35,5 +35,10 @@ export class DirectorController {
   @Get()
   findAll() {
     return this.directorService.findAll();
+  }
+
+  @Get('select')
+  getForSelect() {
+    return this.directorService.getForSelect();
   }
 }

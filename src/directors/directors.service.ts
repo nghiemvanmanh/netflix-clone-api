@@ -6,13 +6,13 @@ import { Director } from 'database/entities/director.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()
-export class DirectorService {
+export class DirectorsService {
   constructor(
     @InjectRepository(Director)
     private readonly directorRepository: Repository<Director>,
   ) {}
 
-  create(createDirectorDto: CreateDirectorDto) {
+  create(createDirectorDto: CreateDirectorDto[]) {
     const director = this.directorRepository.create(createDirectorDto);
     return this.directorRepository.save(director);
   }
@@ -27,5 +27,13 @@ export class DirectorService {
 
   findAll() {
     return this.directorRepository.find();
+  }
+
+  async getForSelect() {
+    const directors = await this.directorRepository.find();
+    return directors.map((director) => ({
+      value: director.id,
+      label: director.name,
+    }));
   }
 }

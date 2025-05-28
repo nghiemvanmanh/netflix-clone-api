@@ -6,7 +6,7 @@ import { Actor } from 'database/entities/actor.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()
-export class ActorService {
+export class ActorsService {
   constructor(
     @InjectRepository(Actor)
     private readonly actorRepository: Repository<Actor>,
@@ -26,5 +26,14 @@ export class ActorService {
 
   findAll() {
     return this.actorRepository.find();
+  }
+
+  getForSelect() {
+    return this.actorRepository.find().then((actors) =>
+      actors.map((actor) => ({
+        value: actor.id,
+        label: actor.name,
+      })),
+    );
   }
 }

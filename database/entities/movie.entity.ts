@@ -16,6 +16,7 @@ import { WatchHistory } from './history.entity';
 import { Director } from './director.entity';
 import { Season } from './season.entity';
 import { Subtitle } from './subtitle-audio.entity';
+import { MovieType } from './movie-type.entity';
 
 @Entity('movies')
 export class Movie {
@@ -41,15 +42,17 @@ export class Movie {
   releaseDate: Date;
 
   @ManyToMany(() => Genre, (genre) => genre.movies)
-  @JoinTable()
+  @JoinTable({ name: 'movies_genres' })
   genres: Genre[];
-
+  @ManyToMany(() => MovieType, (movieType) => movieType.movies)
+  @JoinTable({ name: 'movies_movie-types' })
+  movieTypes: MovieType[];
   @ManyToMany(() => Actor, (actor) => actor.movies)
-  @JoinTable()
+  @JoinTable({ name: 'movies_actors' })
   actors: Actor[];
 
   @ManyToMany(() => Director, (director) => director.movies)
-  @JoinTable()
+  @JoinTable({ name: 'movies_directors' })
   directors: Director[];
 
   @OneToMany(() => Review, (review) => review.movie)

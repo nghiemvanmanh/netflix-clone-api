@@ -12,6 +12,8 @@ async function bootstrap() {
   const reflector = app.get(Reflector);
   const jwtService = app.get(JwtService);
   const refreshTokenRepository = app.get(getRepositoryToken(RefreshToken));
+  const prefix = process.env.PREFIX;
+  app.setGlobalPrefix(prefix); // Thiết lập tiền tố toàn cục cho các route
   app.useGlobalGuards(
     new JwtAuthGuard(reflector, jwtService, refreshTokenRepository),
   );

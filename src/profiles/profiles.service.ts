@@ -7,7 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'database/entities/user.entity';
 
 @Injectable()
-export class ProfileService {
+export class ProfilesService {
   constructor(
     @InjectRepository(Profile)
     private profileRepository: Repository<Profile>,
@@ -35,7 +35,6 @@ export class ProfileService {
   }
 
   async getProfile(userId: number) {
-    console.log('getProfile', userId);
     const profiles = await this.profileRepository.find({
       where: { user: { id: userId } },
       relations: ['user'],

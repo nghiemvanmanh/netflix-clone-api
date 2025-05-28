@@ -3,13 +3,15 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { UserModule } from 'src/user/user.module';
+import { UsersModule } from 'src/users/users.module';
 import { AuthModule } from 'src/auth/auth.module';
 import { dataSource } from 'typeorm.config';
-import { ProfileModule } from 'src/profile/profile.module';
-import { ActorModule } from 'src/actor/actor.module';
-import { DirectorModule } from 'src/director/director.module';
-import { MovieModule } from 'src/movie/movie.module';
+import { ProfilesModule } from 'src/profiles/profiles.module';
+import { ActorsModule } from 'src/actors/actors.module';
+import { DirectorsModule } from 'src/directors/directors.module';
+import { MoviesModule } from 'src/movies/movies.module';
+import { GenresModule } from 'src/genres/genres.module';
+import { MovieTypesModule } from 'src/movie-types/movie-types.module';
 
 @Module({
   imports: [
@@ -21,12 +23,14 @@ import { MovieModule } from 'src/movie/movie.module';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    UserModule,
+    UsersModule,
     AuthModule,
-    ProfileModule,
-    ActorModule,
-    DirectorModule,
-    MovieModule,
+    ProfilesModule,
+    ActorsModule,
+    DirectorsModule,
+    MoviesModule,
+    GenresModule,
+    MovieTypesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

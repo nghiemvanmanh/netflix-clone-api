@@ -9,31 +9,31 @@ import {
   Delete,
   Request,
 } from '@nestjs/common';
-import { ProfileService } from './profile.service';
+import { ProfilesService } from './profiles.service';
 import { CreateProfileDto } from './dto/create-profile.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 
-@Controller('profile')
-export class ProfileController {
-  constructor(private readonly profileService: ProfileService) {}
+@Controller('profiles')
+export class ProfilesController {
+  constructor(private readonly profilesService: ProfilesService) {}
 
-  @Post('create')
+  @Post()
   create(@Request() req, @Body() createProfileDto: CreateProfileDto) {
-    return this.profileService.create(+req.user.id, createProfileDto);
+    return this.profilesService.create(+req.user.id, createProfileDto);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateProfileDto: UpdateProfileDto) {
-    return this.profileService.update(+id, updateProfileDto);
+    return this.profilesService.update(+id, updateProfileDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.profileService.remove(+id);
+    return this.profilesService.remove(+id);
   }
 
-  @Get('getProfile')
+  @Get()
   getProfile(@Request() req) {
-    return this.profileService.getProfile(+req.user.id);
+    return this.profilesService.getProfile(+req.user.id);
   }
 }

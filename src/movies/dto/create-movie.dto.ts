@@ -23,7 +23,7 @@ export class CreateMovieDto {
   thumbnailUrl: string;
 
   @IsUrl()
-  @IsNotEmpty()
+  @IsOptional()
   videoUrl: string;
 
   @IsString()

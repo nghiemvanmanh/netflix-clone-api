@@ -42,10 +42,41 @@ export class MoviesService {
 
     return await this.movieRepository.save(movie);
   }
+  // ...existing code...
+  async update(id: number, updateMovieDto: UpdateMovieDto) {
+    const movie = await this.movieRepository.findOne({ where: { id } });
+    if (!movie) {
+      throw new Error('Movie not found');
+    }
 
-  update(id: number, updateMovieDto: UpdateMovieDto) {
-    return this.movieRepository.update(id, updateMovieDto);
+    // Lấy các entity liên quan
+    const genres = updateMovieDto.genreIds
+      ? await this.genreRepository.findByIds(updateMovieDto.genreIds)
+      : [];
+    const movieTypes = updateMovieDto.movieTypeIds
+      ? await this.movieTypeRepository.findByIds(updateMovieDto.movieTypeIds)
+      : [];
+    const actors = updateMovieDto.actorIds
+      ? await this.actorRepository.findByIds(updateMovieDto.actorIds)
+      : [];
+    const directors = updateMovieDto.directorIds
+      ? await this.directorRepository.findByIds(updateMovieDto.directorIds)
+      : [];
+
+    // Gán lại các trường
+    Object.assign(movie, {
+      ...updateMovieDto,
+      releaseDate: new Date(updateMovieDto.releaseDate),
+      genres,
+      movieTypes,
+      actors,
+      directors,
+    });
+
+    // Lưu lại entity, TypeORM sẽ cập nhật bảng trung gian
+    return this.movieRepository.save(movie);
   }
+  // ...existing code...
 
   remove(id: number) {
     return this.movieRepository.delete(id);

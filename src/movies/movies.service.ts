@@ -8,6 +8,7 @@ import { Repository } from 'typeorm';
 import { MovieType } from 'database/entities/movie-type.entity';
 import { Actor } from 'database/entities/actor.entity';
 import { Director } from 'database/entities/director.entity';
+import { QueryMovieDto } from './dto/query-movie.dto';
 
 @Injectable()
 export class MoviesService {
@@ -82,9 +83,57 @@ export class MoviesService {
     return this.movieRepository.delete(id);
   }
 
-  async findAll() {
-    return this.movieRepository.find({
-      relations: ['genres', 'movieTypes', 'actors', 'directors'],
-    });
+  async findAll(query: QueryMovieDto) {
+    const qb = this.movieRepository
+      .createQueryBuilder('movie')
+      .leftJoinAndSelect('movie.genres', 'genres')
+      .leftJoinAndSelect('movie.movieTypes', 'movieTypes')
+      .leftJoinAndSelect('movie.actors', 'actors')
+      .leftJoinAndSelect('movie.directors', 'directors');
+
+    const searchConditions: Record<
+      string,
+      { condition: string; value: string }
+    > = {
+      title: {
+        condition: 'movie.title ILIKE :title',
+        value: `%${query.title}%`,
+      },
+      genre: {
+        condition: 'genres.name ILIKE :genre',
+        value: `%${query.genre}%`,
+      },
+      movieType: {
+        condition: 'movieTypes.name ILIKE :movieType',
+        value: `%${query.movieType}%`,
+      },
+    };
+
+    for (const [key, { condition, value }] of Object.entries(
+      searchConditions,
+    )) {
+      if (query[key as keyof QueryMovieDto]) {
+        qb.andWhere(condition, { [key]: value });
+      }
+    }
+
+    return qb.getMany();
+  }
+
+  async getMovieById(id: number) {
+    const movie = await this.movieRepository
+      .createQueryBuilder('movie')
+      .leftJoinAndSelect('movie.genres', 'genres')
+      .leftJoinAndSelect('movie.movieTypes', 'movieTypes')
+      .leftJoinAndSelect('movie.actors', 'actors')
+      .leftJoinAndSelect('movie.directors', 'directors')
+      .where('movie.id = :id', { id })
+      .getOne();
+
+    if (!movie) {
+      throw new Error('Movie not found');
+    }
+
+    return movie;
   }
 }

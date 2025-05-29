@@ -1,5 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  OneToMany,
+} from 'typeorm';
 import { User } from './user.entity';
+import { Favorite } from './favorite.entity';
 
 @Entity('profiles')
 export class Profile {
@@ -8,6 +15,9 @@ export class Profile {
 
   @ManyToOne(() => User, (user) => user.profiles)
   user: User;
+
+  @OneToMany(() => Favorite, (favorite) => favorite.profile)
+  favorites: Favorite[];
 
   @Column()
   name: string;

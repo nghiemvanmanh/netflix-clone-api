@@ -12,6 +12,7 @@ import { DirectorsModule } from 'src/directors/directors.module';
 import { MoviesModule } from 'src/movies/movies.module';
 import { GenresModule } from 'src/genres/genres.module';
 import { MovieTypesModule } from 'src/movie-types/movie-types.module';
+import { MyListsModule } from 'src/my-lists/my-lists.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { MovieTypesModule } from 'src/movie-types/movie-types.module';
     MoviesModule,
     GenresModule,
     MovieTypesModule,
+    MyListsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

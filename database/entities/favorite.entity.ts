@@ -7,6 +7,7 @@ import {
 } from 'typeorm';
 import { User } from './user.entity';
 import { Movie } from './movie.entity';
+import { Profile } from './profile.entity';
 
 @Entity('favorites')
 export class Favorite {
@@ -18,6 +19,11 @@ export class Favorite {
 
   @ManyToOne(() => Movie, (movie) => movie.favorites, { onDelete: 'CASCADE' })
   movie: Movie;
+
+  @ManyToOne(() => Profile, (profile) => profile.favorites, {
+    onDelete: 'CASCADE',
+  })
+  profile: Profile;
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;

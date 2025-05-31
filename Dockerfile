@@ -18,9 +18,9 @@ RUN npm run build
 
 # Xóa devDependencies để tối ưu container
 RUN npm ci --production --force
-
 # Kiểm tra thư mục dist
 RUN ls -la dist || exit 1
+RUN ls -la dist/main.js || exit 1
 
 # Expose cổng
 EXPOSE 5000
@@ -30,4 +30,4 @@ RUN chown -R node:node /usr/src/app
 USER node
 
 # Chạy ứng dụng
-CMD ["nest", "start"]
+CMD ["node", "dist/main"]

@@ -15,6 +15,8 @@ RUN npm cache clean --force && npm install --production --silent --legacy-peer-d
 # Copy toàn bộ mã nguồn
 COPY . .
 
+# Build NestJS (nếu bạn dùng TypeScript và chưa build sẵn)
+RUN npm run build
 # Expose cổng cho app chạy
 EXPOSE 5000
 
@@ -22,5 +24,7 @@ EXPOSE 5000
 RUN chown -R node /usr/src/app
 USER node
 
-# Chạy app
-CMD ["npm", "start"]
+# # Chạy app
+# CMD ["npm", "start"]
+# Chạy app đã build
+CMD ["node", "dist/main"]

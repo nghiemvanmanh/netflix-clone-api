@@ -9,9 +9,9 @@ WORKDIR /usr/src/app
 COPY ["package.json", "package-lock.json*", "./"]
 
 # Xoá cache và cài đặt lại gói
-RUN npm ci --production --ignore-scripts
+RUN npm ci --force
 
-
+RUN npm i --force
 # Copy toàn bộ mã nguồn
 COPY . .
 

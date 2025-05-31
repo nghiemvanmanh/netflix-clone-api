@@ -10,7 +10,7 @@ WORKDIR /usr/src/app
 COPY ["package.json", "package-lock.json*", "./"]
 
 # Xoá cache và cài đặt lại gói
-RUN npm cache clean --force && npm install --silent --legacy-peer-deps
+RUN npm cache clean --force && npm install --force
 
 
 # Copy toàn bộ mã nguồn

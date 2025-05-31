@@ -17,7 +17,7 @@ RUN npm cache clean --force && npm install --force
 COPY . .
 
 # Build NestJS (nếu bạn dùng TypeScript và chưa build sẵn)
-RUN npm run build
+RUN yarn build
 # Expose cổng cho app chạy
 EXPOSE 5000
 

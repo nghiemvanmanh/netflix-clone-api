@@ -2,7 +2,6 @@ FROM node:lts-alpine
 
 # Thiết lập môi trường
 ENV NODE_ENV=production
-ENV PATH /usr/src/app/node_modules/.bin:$PATH
 # Tạo thư mục làm việc
 WORKDIR /usr/src/app
 
@@ -10,7 +9,7 @@ WORKDIR /usr/src/app
 COPY ["package.json", "package-lock.json*", "./"]
 
 # Xoá cache và cài đặt lại gói
-RUN npm cache clean --force && npm install --force
+RUN npm ci --production --ignore-scripts
 
 
 # Copy toàn bộ mã nguồn

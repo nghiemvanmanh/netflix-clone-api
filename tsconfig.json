@@ -16,9 +16,9 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false,
-    "rootDir": "./src" // Thêm rootDir để chỉ định thư mục nguồn
+    "noFallthroughCasesInSwitch": false
+    // Bỏ "rootDir" hoặc đặt thành "./" nếu cần
   },
-  "include": ["src/**/*"], // Chỉ định các file cần biên dịch
-  "exclude": ["node_modules", "dist"] // Loại trừ thư mục không cần biên dịch
+  "include": ["src/**/*", "database/**/*"],
+  "exclude": ["node_modules", "dist"]
 }

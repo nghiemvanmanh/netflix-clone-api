@@ -1,30 +1,33 @@
+# Sử dụng image node LTS với Alpine
 FROM node:lts-alpine
 
-# Thiết lập môi trường
-ENV NODE_ENV=production
-# Tạo thư mục làm việc
+# Thiết lập thư mục làm việc
 WORKDIR /usr/src/app
 
-# Copy file cấu hình trước
-COPY ["package.json", "package-lock.json*", "./"]
+# Copy file cấu hình
+COPY package.json package-lock.json* ./
 
-# Xoá cache và cài đặt lại gói
-RUN npm ci --force
+# Cài đặt tất cả dependencies (bao gồm devDependencies) để build
+RUN npm ci
 
-RUN npm i --force
-# Copy toàn bộ mã nguồn
+# Copy mã nguồn
 COPY . .
 
-# Build NestJS (nếu bạn dùng TypeScript và chưa build sẵn)
+# Build ứng dụng
 RUN npm run build
-# Expose cổng cho app chạy
+
+# Xóa devDependencies để tối ưu container
+RUN npm ci --production --ignore-scripts
+
+# Kiểm tra thư mục dist
+RUN ls -la dist || exit 1
+
+# Expose cổng
 EXPOSE 5000
 
-# Phân quyền cho user node
-RUN chown -R node /usr/src/app
+# Phân quyền
+RUN chown -R node:node /usr/src/app
 USER node
 
-# # Chạy app
-# CMD ["npm", "start"]
-# Chạy app đã build
+# Chạy ứng dụng
 CMD ["node", "dist/main"]

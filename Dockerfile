@@ -2,7 +2,7 @@ FROM node:lts-alpine
 
 # Thiết lập môi trường
 ENV NODE_ENV=production
-
+ENV PATH /usr/src/app/node_modules/.bin:$PATH
 # Tạo thư mục làm việc
 WORKDIR /usr/src/app
 
@@ -17,7 +17,7 @@ RUN npm cache clean --force && npm install --force
 COPY . .
 
 # Build NestJS (nếu bạn dùng TypeScript và chưa build sẵn)
-RUN yarn build
+RUN npm run build
 # Expose cổng cho app chạy
 EXPOSE 5000
 

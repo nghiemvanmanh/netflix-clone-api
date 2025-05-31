@@ -12,6 +12,8 @@ export class MyListsService {
   async create(userId: number, profileId: number, movieId: number) {
     const existingMovie = await this.favoriteRepository.findOne({
       where: {
+        user: { id: userId },
+        profile: { id: profileId },
         movie: { id: movieId },
       },
     });

@@ -8,7 +8,7 @@ WORKDIR /usr/src/app
 COPY package.json package-lock.json* ./
 
 # Cài đặt tất cả dependencies (bao gồm devDependencies) để build
-RUN npm ci
+RUN npm ci --force
 
 # Copy mã nguồn
 COPY . .

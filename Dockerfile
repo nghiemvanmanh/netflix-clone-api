@@ -20,7 +20,7 @@ RUN npm run build
 RUN npm ci --production --force
 # Kiểm tra thư mục dist
 RUN ls -la dist || exit 1
-RUN ls -la dist/main.js || exit 1
+RUN ls -la dist/src/main.js || exit 1
 
 # Expose cổng
 EXPOSE 5000

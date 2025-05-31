@@ -17,7 +17,7 @@ COPY . .
 RUN npm run build
 
 # Xóa devDependencies để tối ưu container
-RUN npm ci --production --ignore-scripts
+RUN npm ci --production --force
 
 # Kiểm tra thư mục dist
 RUN ls -la dist || exit 1

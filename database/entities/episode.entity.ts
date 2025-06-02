@@ -3,8 +3,8 @@ import { Season } from './season.entity';
 
 @Entity('episodes')
 export class Episode {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column()
   title: string;

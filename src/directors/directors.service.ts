@@ -17,11 +17,11 @@ export class DirectorsService {
     return this.directorRepository.save(director);
   }
 
-  update(id: number, updateDirectorDto: UpdateDirectorDto) {
+  update(id: string, updateDirectorDto: UpdateDirectorDto) {
     return this.directorRepository.update(id, updateDirectorDto);
   }
 
-  remove(id: number) {
+  remove(id: string) {
     return this.directorRepository.delete(id);
   }
 

@@ -11,8 +11,8 @@ import { Movie } from './movie.entity';
 
 @Entity('watch_histories')
 export class WatchHistory {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @ManyToOne(() => User, (user) => user.watchHistory)
   user: User;

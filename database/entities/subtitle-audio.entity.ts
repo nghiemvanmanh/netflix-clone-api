@@ -4,8 +4,8 @@ import { typeAudioMovie } from 'src/common/enums/enum';
 
 @Entity('subtitles')
 export class Subtitle {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @ManyToOne(() => Movie, (movie) => movie.subtitles)
   movie: Movie;

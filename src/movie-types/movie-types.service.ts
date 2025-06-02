@@ -17,19 +17,19 @@ export class MovieTypesService {
     });
     if (existingMovieTypes.length) {
       throw new ConflictException(
-        `Movie types with names ${existingMovieTypes.map((mt) => mt.name).join(', ')} already exist`,
+        `Thể loại phim ${existingMovieTypes.map((mt) => mt.name).join(', ')} đã tồn tại`,
       );
     }
     const movieTypes = this.movieTypeRepository.create(createMovieTypeDto);
     return this.movieTypeRepository.save(movieTypes);
   }
 
-  async update(id: number, updateMovieTypeDto: UpdateMovieTypeDto) {
+  async update(id: string, updateMovieTypeDto: UpdateMovieTypeDto) {
     await this.movieTypeRepository.update(id, updateMovieTypeDto);
     return this.movieTypeRepository.findOneBy({ id });
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     await this.movieTypeRepository.delete(id);
   }
 

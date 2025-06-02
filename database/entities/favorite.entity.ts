@@ -11,8 +11,8 @@ import { Profile } from './profile.entity';
 
 @Entity('favorites')
 export class Favorite {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @ManyToOne(() => User, (user) => user.favorites, { onDelete: 'CASCADE' })
   user: User;

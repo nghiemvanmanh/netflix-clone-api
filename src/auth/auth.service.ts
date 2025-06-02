@@ -47,7 +47,7 @@ export class AuthService {
         };
       }
     }
-    throw new UnauthorizedException('Incorrect account or password');
+    throw new UnauthorizedException('Tài khoản hoặc mật khẩu không đúng');
   }
 
   async refreshAccessToken(token: string) {

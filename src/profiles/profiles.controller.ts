@@ -19,21 +19,21 @@ export class ProfilesController {
 
   @Post()
   create(@Request() req, @Body() createProfileDto: CreateProfileDto) {
-    return this.profilesService.create(+req.user.id, createProfileDto);
+    return this.profilesService.create(req.user.id as string, createProfileDto);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateProfileDto: UpdateProfileDto) {
-    return this.profilesService.update(+id, updateProfileDto);
+    return this.profilesService.update(id, updateProfileDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.profilesService.remove(+id);
+    return this.profilesService.remove(id);
   }
 
   @Get()
   getProfile(@Request() req) {
-    return this.profilesService.getProfile(+req.user.id);
+    return this.profilesService.getProfile(req.user.id as string);
   }
 }

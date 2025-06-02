@@ -10,8 +10,8 @@ import { Favorite } from './favorite.entity';
 
 @Entity('profiles')
 export class Profile {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @ManyToOne(() => User, (user) => user.profiles)
   user: User;

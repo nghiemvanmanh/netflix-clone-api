@@ -24,12 +24,12 @@ export class MovieTypesController {
     @Param('id') id: string,
     @Body() updateMovieTypeDto: UpdateMovieTypeDto,
   ) {
-    return this.movieTypesService.update(+id, updateMovieTypeDto);
+    return this.movieTypesService.update(id, updateMovieTypeDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.movieTypesService.remove(+id);
+    return this.movieTypesService.remove(id);
   }
 
   @Get('select')

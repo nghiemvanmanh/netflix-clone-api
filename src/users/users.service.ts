@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from 'database/entities/user.entity';
 import { DataSource, Repository } from 'typeorm';
@@ -19,7 +23,7 @@ export class UsersService {
       where: { email: newUser.email },
     });
     if (user) {
-      throw new Error(`User ${newUser.email} already used`);
+      throw new ConflictException(`Email ${newUser.email} đã được đăng ký`);
     }
     const hashPass = await bcrypt.hash(newUser.password, 10);
     const userNew = this.userRepository.create({
@@ -30,7 +34,7 @@ export class UsersService {
     return this.userRepository.save(userNew);
   }
 
-  async update(id: number, updatedUser: UpdateUserDto): Promise<User> {
+  async update(id: string, updatedUser: UpdateUserDto): Promise<User> {
     const user = await this.userRepository.findOne({ where: { id: id } });
     if (!user) {
       throw new UnauthorizedException(`User ${id} not found`);
@@ -39,7 +43,7 @@ export class UsersService {
     return user;
   }
 
-  async delete(id: number) {
+  async delete(id: string) {
     const user = await this.userRepository.findOne({ where: { id: id } });
     if (!user) {
       throw new UnauthorizedException(`User ${id} not found`);

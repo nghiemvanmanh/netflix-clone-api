@@ -14,10 +14,10 @@ export class ProfilesService {
     @InjectRepository(User)
     private userRepository: Repository<User>,
   ) {}
-  async create(userId: number, createProfileDto: CreateProfileDto) {
+  async create(userId: string, createProfileDto: CreateProfileDto) {
     const user = await this.userRepository.findOne({ where: { id: userId } });
     if (!user) {
-      throw new NotFoundException(`User with ID ${userId} not found`);
+      throw new NotFoundException(`Người dùng ${user.email} không tìm thấy`);
     }
     const profile = this.profileRepository.create({
       ...createProfileDto,
@@ -26,22 +26,22 @@ export class ProfilesService {
     await this.profileRepository.save(profile);
   }
 
-  update(id: number, updateProfileDto: UpdateProfileDto) {
+  update(id: string, updateProfileDto: UpdateProfileDto) {
     return this.profileRepository.update(id, updateProfileDto);
   }
 
-  remove(id: number) {
+  remove(id: string) {
     return this.profileRepository.delete({ id });
   }
 
-  async getProfile(userId: number) {
+  async getProfile(userId: string) {
     const profiles = await this.profileRepository.find({
       where: { user: { id: userId } },
       relations: ['user'],
     });
     if (!profiles || profiles.length === 0) {
       throw new NotFoundException(
-        `Profile for user with ID ${userId} not found`,
+        `Hồ sơ với người dùng ${userId} không tìm thấy`,
       );
     }
     return profiles;

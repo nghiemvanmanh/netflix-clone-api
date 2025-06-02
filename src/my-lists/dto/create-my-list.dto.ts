@@ -1,16 +1,16 @@
 // favorite/dto/create-favorite.dto.ts
-import { IsInt, IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateMyListDto {
-  @IsInt()
+  @IsString()
   @IsNotEmpty()
-  userId: number;
+  userid: string;
 
-  @IsInt()
+  @IsString()
   @IsNotEmpty()
-  profileId: number;
+  profileid: string;
 
-  @IsInt()
+  @IsString()
   @IsNotEmpty()
-  movieId: number;
+  movieid: string;
 }

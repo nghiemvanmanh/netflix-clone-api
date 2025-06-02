@@ -10,8 +10,8 @@ import {
 import { Movie } from './movie.entity';
 @Entity('genres')
 export class Genre {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column()
   name: string;

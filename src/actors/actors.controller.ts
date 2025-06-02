@@ -20,12 +20,12 @@ export class ActorsController {
     return this.actorService.create(createActorDto);
   }
   @Put(':id')
-  update(@Param('id') id: number, @Body() updateActorDto: UpdateActorDto) {
+  update(@Param('id') id: string, @Body() updateActorDto: UpdateActorDto) {
     return this.actorService.update(id, updateActorDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: number) {
+  remove(@Param('id') id: string) {
     return this.actorService.remove(id);
   }
   @Get()

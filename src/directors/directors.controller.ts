@@ -24,12 +24,12 @@ export class DirectorsController {
     @Param('id') id: string,
     @Body() updateDirectorDto: UpdateDirectorDto,
   ) {
-    return this.directorService.update(+id, updateDirectorDto);
+    return this.directorService.update(id, updateDirectorDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.directorService.remove(+id);
+    return this.directorService.remove(id);
   }
 
   @Get()

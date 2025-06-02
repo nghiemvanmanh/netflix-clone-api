@@ -5,7 +5,6 @@ import {
   IsArray,
   ArrayNotEmpty,
   IsUrl,
-  IsInt,
   IsOptional,
 } from 'class-validator';
 
@@ -36,21 +35,21 @@ export class CreateMovieDto {
 
   @IsArray()
   @ArrayNotEmpty()
-  @IsInt({ each: true })
-  genreIds: number[];
+  @IsString({ each: true })
+  genreIds: string[];
 
   @IsArray()
   @ArrayNotEmpty()
-  @IsInt({ each: true })
-  movieTypeIds: number[];
+  @IsString({ each: true })
+  movieTypeIds: string[];
 
   @IsArray()
   @ArrayNotEmpty()
-  @IsInt({ each: true })
-  actorIds: number[];
+  @IsString({ each: true })
+  actorIds: string[];
 
   @IsArray()
   @ArrayNotEmpty()
-  @IsInt({ each: true })
-  directorIds: number[];
+  @IsString({ each: true })
+  directorIds: string[];
 }

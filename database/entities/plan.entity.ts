@@ -10,8 +10,8 @@ import { User } from './user.entity';
 
 @Entity('subscription_plans')
 export class SubscriptionPlan {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column()
   name: string; // Free, Basic, Premium

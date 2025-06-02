@@ -16,11 +16,11 @@ export class ActorsService {
     return this.actorRepository.save(actor);
   }
 
-  update(id: number, updateActorDto: UpdateActorDto) {
+  update(id: string, updateActorDto: UpdateActorDto) {
     return this.actorRepository.update(id, updateActorDto);
   }
 
-  remove(id: number) {
+  remove(id: string) {
     return this.actorRepository.delete(id);
   }
 

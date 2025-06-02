@@ -28,7 +28,7 @@ export class GenresService {
     return this.genreRepository.save(genres);
   }
 
-  async update(id: number, updateGenreDto: UpdateGenreDto) {
+  async update(id: string, updateGenreDto: UpdateGenreDto) {
     const existingGenre = await this.genreRepository.findOne({ where: { id } });
     if (!existingGenre) {
       throw new NotFoundException(`Genre with ID ${id} not found`);
@@ -36,7 +36,7 @@ export class GenresService {
     return this.genreRepository.update(id, updateGenreDto);
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     const existingGenre = await this.genreRepository.findOne({ where: { id } });
     if (!existingGenre) {
       throw new NotFoundException(`Genre with ID ${id} not found`);

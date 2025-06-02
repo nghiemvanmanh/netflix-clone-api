@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateMovieDto } from './dto/create-movie.dto';
 import { UpdateMovieDto } from './dto/update-movie.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -44,10 +44,10 @@ export class MoviesService {
     return await this.movieRepository.save(movie);
   }
   // ...existing code...
-  async update(id: number, updateMovieDto: UpdateMovieDto) {
+  async update(id: string, updateMovieDto: UpdateMovieDto) {
     const movie = await this.movieRepository.findOne({ where: { id } });
     if (!movie) {
-      throw new Error('Movie not found');
+      throw new NotFoundException('Không tìm thấy phim');
     }
 
     // Lấy các entity liên quan
@@ -79,7 +79,7 @@ export class MoviesService {
   }
   // ...existing code...
 
-  remove(id: number) {
+  remove(id: string) {
     return this.movieRepository.delete(id);
   }
 
@@ -120,7 +120,7 @@ export class MoviesService {
     return qb.getMany();
   }
 
-  async getMovieById(id: number) {
+  async getMovieById(id: string) {
     const movie = await this.movieRepository
       .createQueryBuilder('movie')
       .leftJoinAndSelect('movie.genres', 'genres')
@@ -131,7 +131,7 @@ export class MoviesService {
       .getOne();
 
     if (!movie) {
-      throw new Error('Movie not found');
+      throw new NotFoundException('Không tìm thấy phim');
     }
 
     return movie;

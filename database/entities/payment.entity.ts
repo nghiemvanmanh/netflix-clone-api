@@ -11,8 +11,8 @@ import { SubscriptionPlan } from './plan.entity';
 
 @Entity('payments')
 export class Payment {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @ManyToOne(() => User, (user) => user.payments)
   user: User;

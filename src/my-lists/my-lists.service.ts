@@ -9,7 +9,7 @@ export class MyListsService {
     @InjectRepository(Favorite)
     private readonly favoriteRepository: Repository<Favorite>,
   ) {}
-  async create(userId: number, profileId: number, movieId: number) {
+  async create(userId: string, profileId: string, movieId: string) {
     const existingMovie = await this.favoriteRepository.findOne({
       where: {
         user: { id: userId },
@@ -30,7 +30,7 @@ export class MyListsService {
     return await this.favoriteRepository.save(favorite);
   }
 
-  remove(userId: number, profileId: number, movieId: number) {
+  remove(userId: string, profileId: string, movieId: string) {
     return this.favoriteRepository.delete({
       user: { id: userId },
       profile: { id: profileId },
@@ -38,7 +38,7 @@ export class MyListsService {
     });
   }
 
-  async getMyList(userId: number, profileId: number) {
+  async getMyList(userId: string, profileId: string) {
     return this.favoriteRepository.find({
       where: { user: { id: userId }, profile: { id: profileId } },
       relations: ['movie', 'movie.genres'],

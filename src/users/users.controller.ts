@@ -34,7 +34,7 @@ export class UsersController {
   @UseGuards(AdminGuard)
   @Put()
   async update(
-    @Param('id') id: number,
+    @Param('id') id: string,
     @Body() updateUser: UpdateUserDto,
   ): Promise<User> {
     return await this.usersService.update(id, updateUser);
@@ -42,7 +42,7 @@ export class UsersController {
 
   @UseGuards(AdminGuard)
   @Delete()
-  async delete(@Param('id') id: number) {
+  async delete(@Param('id') id: string) {
     return await this.usersService.delete(id);
   }
 }

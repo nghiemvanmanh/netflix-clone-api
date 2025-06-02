@@ -11,9 +11,9 @@ export class CreateUserDto {
   @IsNotEmpty()
   email: string;
   @IsNotEmpty()
-  @MinLength(6, { message: 'Password must be at least 6 characters long' })
+  @MinLength(6, { message: 'Mật khẩu phải có ít nhất 6 ký tự' })
   @Matches(/^(?=.*[A-Za-z])(?=.*\d)/, {
-    message: 'Password must contain at least one letter and one number',
+    message: 'Mật khẩu phải chứa ít nhất một chữ cái (a-z) và một số (0-9)',
   })
   password: string;
 

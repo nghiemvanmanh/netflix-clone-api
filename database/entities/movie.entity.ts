@@ -17,6 +17,7 @@ import { Director } from './director.entity';
 import { Season } from './season.entity';
 import { Subtitle } from './subtitle-audio.entity';
 import { MovieType } from './movie-type.entity';
+import { Notification } from './notification.entity';
 
 @Entity('movies')
 export class Movie {
@@ -44,9 +45,11 @@ export class Movie {
   @ManyToMany(() => Genre, (genre) => genre.movies)
   @JoinTable({ name: 'movies_genres' })
   genres: Genre[];
+
   @ManyToMany(() => MovieType, (movieType) => movieType.movies)
   @JoinTable({ name: 'movies_movie-types' })
   movieTypes: MovieType[];
+
   @ManyToMany(() => Actor, (actor) => actor.movies)
   @JoinTable({ name: 'movies_actors' })
   actors: Actor[];
@@ -63,11 +66,13 @@ export class Movie {
 
   @OneToMany(() => WatchHistory, (history) => history.movie)
   watchHistory: WatchHistory[];
+
   @OneToMany(() => Season, (season) => season.movie)
   seasons: Season[];
 
   @OneToMany(() => Subtitle, (subtitle) => subtitle.movie)
   subtitles: Subtitle[];
+
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
   @UpdateDateColumn({ type: 'timestamp' })

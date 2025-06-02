@@ -18,10 +18,20 @@ export class Notification {
 
   @Column({ type: 'enum', enum: typeNotification })
   type: typeNotification;
-  @Column()
+
+  @Column({ nullable: true })
   title: string;
-  @Column()
+  @Column({ nullable: true })
   message: string;
+
+  @Column({ nullable: true })
+  movieId: string;
+
+  @Column({ nullable: true })
+  movieTitle: string;
+
+  @Column({ nullable: true })
+  movieImage: string;
 
   @Column({ default: false })
   isRead: boolean;

@@ -5,17 +5,16 @@ import {
   ManyToOne,
   CreateDateColumn,
 } from 'typeorm';
-import { User } from './user.entity';
 import { typeNotification } from 'src/common/enums/enum';
+import { Profile } from './profile.entity';
 
 @Entity('notifications')
 export class Notification {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => User, (user) => user.notifications)
-  user: User;
-
+  @ManyToOne(() => Profile, (profile) => profile.notifications)
+  profile: Profile;
   @Column({ type: 'enum', enum: typeNotification })
   type: typeNotification;
 

@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { Public } from 'src/auth/decorators/custompublic';
+import { Public } from 'src/auth/decorators/custom-public';
 import { User } from 'database/entities/user.entity';
 import { AuthService } from 'src/auth/auth.service';
 import { UpdateUserDto } from './dto/update-user.dto';

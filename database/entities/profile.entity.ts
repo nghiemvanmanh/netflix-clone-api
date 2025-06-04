@@ -7,6 +7,8 @@ import {
 } from 'typeorm';
 import { User } from './user.entity';
 import { Favorite } from './favorite.entity';
+import { Notification } from './notification.entity';
+import { WatchHistory } from './history.entity';
 
 @Entity('profiles')
 export class Profile {
@@ -16,8 +18,15 @@ export class Profile {
   @ManyToOne(() => User, (user) => user.profiles)
   user: User;
 
+  @OneToMany(() => Notification, (notification) => notification.profile, {
+    onDelete: 'CASCADE',
+  })
+  notifications: Notification[];
   @OneToMany(() => Favorite, (favorite) => favorite.profile)
   favorites: Favorite[];
+
+  @OneToMany(() => WatchHistory, (history) => history.profile)
+  watchHistory: WatchHistory[];
 
   @Column()
   name: string;

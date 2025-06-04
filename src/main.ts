@@ -21,7 +21,8 @@ async function bootstrap() {
   app.use(cookieParser());
   app.useGlobalPipes(new ValidationPipe());
   app.enableCors({
-    origin: 'http://localhost:3000', // Cho phép từ Next.js
+    origin: process.env.FRONTEND_URL,
+    // Cho phép từ Next.js
     credentials: true, // Nếu dùng cookies hay headers đặc biệt
   });
   // Cấu hình swagger

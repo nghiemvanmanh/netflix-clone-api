@@ -18,25 +18,25 @@ export class NotificationsService {
   }
 
   async markAsRead(id: string): Promise<void> {
-    const result = await this.notificationRepo
-      .createQueryBuilder()
-      .update(Notification)
-      .set({ isRead: true })
-      .where('id = :id', { id })
-      .execute();
+    const result = await this.notificationRepo.update(id, {
+      isRead: true,
+    });
 
     if (result.affected === 0) {
       throw new NotFoundException(`Notification with id ${id} not found`);
     }
   }
 
-  async markAllAsRead(): Promise<void> {
-    await this.notificationRepo
-      .createQueryBuilder()
-      .update(Notification)
-      .set({ isRead: true })
-      .where('isRead = :isRead', { isRead: false })
-      .execute();
+  async markAllAsRead(profileId: string): Promise<void> {
+    await this.notificationRepo.update(
+      {
+        isRead: false,
+        profile: { id: profileId }, // Assuming profile is a relation in Notification entity
+      },
+      {
+        isRead: true,
+      },
+    );
   }
 
   async delete(id: string) {

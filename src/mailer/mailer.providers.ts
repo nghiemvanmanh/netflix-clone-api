@@ -2,8 +2,10 @@
 import * as nodemailer from 'nodemailer';
 import { Provider } from '@nestjs/common';
 
+export const MAILER_TOKEN = 'MAIL_TRANSPORTER';
+
 export const mailerProvider: Provider = {
-  provide: 'MAIL_TRANSPORTER',
+  provide: MAILER_TOKEN,
   useFactory: () => {
     return nodemailer.createTransport({
       service: 'gmail',

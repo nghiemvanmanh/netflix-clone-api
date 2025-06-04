@@ -8,6 +8,7 @@ import { Payment } from 'database/entities/payment.entity';
 import { User } from 'database/entities/user.entity';
 import * as nodemailer from 'nodemailer';
 import * as escapeHtml from 'escape-html';
+import { MAILER_TOKEN } from 'src/mailer/mailer.providers';
 @Injectable()
 export class SubscriptionsService {
   private stripe: Stripe;
@@ -21,7 +22,7 @@ export class SubscriptionsService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
 
-    @Inject('MAIL_TRANSPORTER')
+    @Inject(MAILER_TOKEN)
     private readonly transporter: nodemailer.Transporter,
   ) {
     const stripeKey = process.env.STRIPE_SECRET_KEY;

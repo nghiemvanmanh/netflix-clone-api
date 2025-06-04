@@ -6,7 +6,7 @@ import {
   Request,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { Public } from './decorators/custompublic';
+import { Public } from './decorators/custom-public';
 
 @Controller('auth')
 export class AuthController {

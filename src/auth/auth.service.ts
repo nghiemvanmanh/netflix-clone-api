@@ -19,7 +19,7 @@ export class AuthService {
   ) {}
   async login(email: string, password: string) {
     const user = await this.userRepository.findOne({
-      where: { email: email },
+      where: { email },
     });
     if (user) {
       const isMatched = compareSync(password, user.password);
@@ -29,17 +29,21 @@ export class AuthService {
           email: user.email,
           phone: user.phoneNumber,
         };
+
         const [accessToken, refreshToken] = await Promise.all([
           this.jwtService.sign(payload),
           this.jwtService.sign(payload, {
             expiresIn: '24h',
           }),
         ]);
+
+        const ONE_DAY_IN_MS = 24 * 60 * 60 * 1000;
         await this.refreshTokenRepository.save({
           user,
           token: refreshToken,
-          expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
+          expiresAt: new Date(Date.now() + ONE_DAY_IN_MS),
         });
+
         return {
           user: user,
           accessToken: accessToken,

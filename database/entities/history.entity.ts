@@ -6,16 +6,16 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { User } from './user.entity';
 import { Movie } from './movie.entity';
+import { Profile } from './profile.entity';
 
 @Entity('watch_histories')
 export class WatchHistory {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => User, (user) => user.watchHistory)
-  user: User;
+  @ManyToOne(() => Profile, (profile) => profile.watchHistory)
+  profile: Profile;
 
   @ManyToOne(() => Movie, (movie) => movie.watchHistory)
   movie: Movie;

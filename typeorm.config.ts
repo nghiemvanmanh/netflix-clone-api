@@ -13,9 +13,6 @@ const migrationsPath = isProduction
   ? path.join(__dirname, 'database', 'migrations', '*.js')
   : path.join(__dirname, 'database', 'migrations', '*.ts');
 
-console.log('Entities path:', entitiesPath); // log ra để chắc chắn
-console.log('Migrations path:', migrationsPath);
-
 const ConfigDataSource: DataSourceOptions = {
   type: 'postgres',
   // host: process.env.DB_HOST,

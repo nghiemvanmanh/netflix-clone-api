@@ -27,11 +27,10 @@ export class NotificationsService {
     }
   }
 
-  async markAllAsRead(profileId: string): Promise<void> {
+  async markAllAsRead(): Promise<void> {
     await this.notificationRepo.update(
       {
         isRead: false,
-        profile: { id: profileId }, // Assuming profile is a relation in Notification entity
       },
       {
         isRead: true,

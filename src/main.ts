@@ -7,13 +7,14 @@ import * as cookieParser from 'cookie-parser';
 import { AppModule } from './app/app.module';
 import { RefreshToken } from 'database/entities/refresh-token.entity';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-
+import { EnvService } from './env/env.service';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const env = app.get(EnvService);
   const reflector = app.get(Reflector);
   const jwtService = app.get(JwtService);
   const refreshTokenRepository = app.get(getRepositoryToken(RefreshToken));
-  const prefix = process.env.PREFIX;
+  const prefix = env.get('PREFIX');
   app.setGlobalPrefix(prefix); // Thiết lập tiền tố toàn cục cho các route
   app.useGlobalGuards(
     new JwtAuthGuard(reflector, jwtService, refreshTokenRepository),
@@ -21,7 +22,7 @@ async function bootstrap() {
   app.use(cookieParser());
   app.useGlobalPipes(new ValidationPipe());
   app.enableCors({
-    origin: process.env.FRONTEND_URL,
+    origin: env.get('FRONTEND_URL'),
     // Cho phép từ Next.js
     credentials: true, // Nếu dùng cookies hay headers đặc biệt
   });
@@ -36,7 +37,6 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document); // Thư mục /api sẽ chứa swagger UI
-  console.log(process.env.NODE_ENV);
-  await app.listen(process.env.PORT, '0.0.0.0');
+  await app.listen(env.get('PORT'), '0.0.0.0');
 }
 bootstrap();

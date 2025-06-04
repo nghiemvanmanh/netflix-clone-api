@@ -9,7 +9,8 @@
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
-    "dev": "cross-env NODE_ENV=development nodemon --watch src -e ts --exec ts-node -r tsconfig-paths/register src/main.ts",
+    "dev": "dotenv -e .env.local -- nodemon --watch src -e ts --exec ts-node -r tsconfig-paths/register src/main.ts",
+    "dev:prod" : "dotenv -e .env.prod -- nodemon --watch src -e ts --exec ts-node -r tsconfig-paths/register src/main.ts",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/src/main.js",
@@ -21,8 +22,12 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "typeorm": "typeorm-ts-node-commonjs",
     "migration:revert": "npm run typeorm migration:revert -- -d src/data-source.ts",
-    "typeorm:generate": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:generate database/migrations/%npm_config_name% -d typeorm.config.ts",
-    "typeorm:run": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:run -d typeorm.config.ts"
+    "migration:run:local": "dotenv -e .env.local -- ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:run -d typeorm.config.ts",
+    "migration:generate:local": "dotenv -e .env.local -- ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:generate src/database/migrations/local/%npm_config_name% -d typeorm.config.ts",
+    "migration:revert:local": "dotenv -e .env.local -- ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:revert -d typeorm.config.ts",
+    "migration:run:prod": "dotenv -e .env.production -- ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:run -d typeorm.config.ts",
+    "migration:generate:prod": "dotenv -e .env.production -- ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:generate src/database/migrations/prod/%npm_config_name% -d typeorm.config.ts",
+    "migration:revert:prod": "dotenv -e .env.production -- ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:revert -d typeorm.config.ts"
   },
   "dependencies": {
     "@nestjs/cli": "^11.0.0",

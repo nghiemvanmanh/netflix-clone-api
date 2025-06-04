@@ -16,17 +16,16 @@ import { MyListsModule } from 'src/my-lists/my-lists.module';
 import { NotificationsModule } from 'src/notifications/notifications.module';
 import { SubscriptionsModule } from 'src/subscriptions/subscriptions.module';
 import { mailerProvider } from 'src/mailer/mailer.providers';
+import { EnvModule } from 'src/env/env.module';
 
 @Module({
   imports: [
+    EnvModule,
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule.forRoot()],
-      inject: [ConfigService],
       useFactory: () => dataSource.options,
     }),
-    ConfigModule.forRoot({
-      isGlobal: true,
-    }),
+
     UsersModule,
     AuthModule,
     ProfilesModule,

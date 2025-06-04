@@ -15,16 +15,11 @@ const migrationsPath = isProduction
 
 const ConfigDataSource: DataSourceOptions = {
   type: 'postgres',
-  // host: process.env.DB_HOST,
-  // port: Number(process.env.DB_PORT),
-  // username: process.env.DB_USERNAME,
-  // password: process.env.DB_PASSWORD,
-  // database: process.env.DB_DATABASE,
-  host: process.env.DB_HOST_DEPLOY,
-  port: Number(process.env.DB_PORT_DEPLOY),
-  username: process.env.DB_USERNAME_DEPLOY,
-  password: process.env.DB_PASSWORD_DEPLOY,
-  database: process.env.DB_DATABASE_DEPLOY,
+  host: process.env.DB_HOST,
+  port: Number(process.env.DB_PORT),
+  username: process.env.DB_USERNAME,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_DATABASE,
   entities: [entitiesPath],
   migrations: [migrationsPath],
   ssl: {

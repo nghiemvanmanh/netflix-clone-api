@@ -9,6 +9,7 @@ import { User } from 'database/entities/user.entity';
 import * as nodemailer from 'nodemailer';
 import * as escapeHtml from 'escape-html';
 import { MAILER_TOKEN } from 'src/mailer/mailer.providers';
+import { EnvService } from 'src/env/env.service';
 @Injectable()
 export class SubscriptionsService {
   private stripe: Stripe;
@@ -17,15 +18,17 @@ export class SubscriptionsService {
     @InjectRepository(SubscriptionPlan)
     private subscriptionRepository: Repository<SubscriptionPlan>,
     @InjectRepository(Payment)
-    private readonly paymentRepository: Repository<Payment>,
+    private paymentRepository: Repository<Payment>,
 
     @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
+    private userRepository: Repository<User>,
 
     @Inject(MAILER_TOKEN)
-    private readonly transporter: nodemailer.Transporter,
+    private transporter: nodemailer.Transporter,
+
+    private env: EnvService,
   ) {
-    const stripeKey = process.env.STRIPE_SECRET_KEY;
+    const stripeKey = this.env.get('STRIPE_SECRET_KEY');
     if (!stripeKey) {
       throw new Error('Missing Stripe secret key!');
     }
@@ -58,8 +61,8 @@ export class SubscriptionsService {
           planId,
           amount,
         },
-        success_url: `${process.env.FRONTEND_URL}/subscription/success?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${process.env.FRONTEND_URL}/subscription/cancel`,
+        success_url: `${this.env.get('FRONTEND_URL')}/subscription/success?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${this.env.get('FRONTEND_URL')}/subscription/cancel`,
       });
 
       return { sessionId: session.id };
@@ -134,7 +137,7 @@ export class SubscriptionsService {
       ]);
 
       await this.transporter.sendMail({
-        from: process.env.EMAIL_USER,
+        from: this.env.get('EMAIL_USER'),
         to: user.email,
         subject: 'Xác nhận thanh toán thành công',
         html: `

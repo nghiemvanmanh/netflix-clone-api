@@ -16,23 +16,17 @@ import { MyListsModule } from 'src/my-lists/my-lists.module';
 import { NotificationsModule } from 'src/notifications/notifications.module';
 import { SubscriptionsModule } from 'src/subscriptions/subscriptions.module';
 import { mailerProvider } from 'src/mailer/mailer.providers';
+
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-      envFilePath: (() => {
-        return process.env.NODE_ENV === 'production'
-          ? '.env.production'
-          : '.env';
-      })(),
-    }),
-
     TypeOrmModule.forRootAsync({
-      imports: [ConfigModule], // CHỈ cần import ConfigModule, KHÔNG gọi forRoot ở đây
+      imports: [ConfigModule.forRoot()],
       inject: [ConfigService],
       useFactory: () => dataSource.options,
     }),
-
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     UsersModule,
     AuthModule,
     ProfilesModule,

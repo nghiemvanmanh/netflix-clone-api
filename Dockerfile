@@ -30,4 +30,4 @@ RUN chown -R node:node /usr/src/app
 USER node
 
 # Chạy ứng dụng
-CMD ["node", "dist/src/main"]
+CMD ["node", "dist/src/main.js"]

@@ -6,6 +6,7 @@ import { ValidationPipe } from '@nestjs/common';
 import * as cookieParser from 'cookie-parser';
 import { AppModule } from './app/app.module';
 import { RefreshToken } from 'database/entities/refresh-token.entity';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -23,6 +24,18 @@ async function bootstrap() {
     origin: 'http://localhost:3000', // Cho phép từ Next.js
     credentials: true, // Nếu dùng cookies hay headers đặc biệt
   });
+  // Cấu hình swagger
+  const config = new DocumentBuilder()
+    .setTitle('Your API Title')
+    .setDescription('API description')
+    .setVersion('1.0')
+    // Nếu bạn có auth (bearer), có thể config thêm:
+    // .addBearerAuth()
+    .build();
+
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, document); // Thư mục /api sẽ chứa swagger UI
+  console.log(process.env.NODE_ENV);
   await app.listen(process.env.PORT, '0.0.0.0');
 }
 bootstrap();

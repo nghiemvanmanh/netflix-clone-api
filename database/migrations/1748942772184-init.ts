@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class Init1748831356923 implements MigrationInterface {
-    name = 'Init1748831356923'
+export class Init1748942772184 implements MigrationInterface {
+    name = 'Init1748942772184'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`CREATE TABLE "genres" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_80ecd718f0f00dde5d77a9be842" PRIMARY KEY ("id"))`);
@@ -11,16 +11,16 @@ export class Init1748831356923 implements MigrationInterface {
         await queryRunner.query(`CREATE TABLE "directors" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying NOT NULL, "description" character varying NOT NULL, "photoUrl" character varying, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_a9ae28f00c93801aa034a2c1773" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "episodes" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "title" character varying NOT NULL, "description" text NOT NULL, "videoUrl" character varying NOT NULL, "duration" character varying NOT NULL, "episodeNumber" integer NOT NULL, "seasonId" uuid, CONSTRAINT "PK_6a003fda8b0473fffc39cb831c7" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "seasons" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "seasonNumber" integer NOT NULL, "movieId" uuid, CONSTRAINT "PK_cb8ed53b5fe109dcd4a4449ec9d" PRIMARY KEY ("id"))`);
-        await queryRunner.query(`CREATE TYPE "public"."subtitles_type_enum" AS ENUM('Subtitle', 'Audio')`);
-        await queryRunner.query(`CREATE TABLE "subtitles" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "language" character varying NOT NULL, "url" character varying NOT NULL, "type" "public"."subtitles_type_enum" NOT NULL DEFAULT 'Subtitle', "movieId" uuid, CONSTRAINT "PK_9ac397e12396227e34ba97af99e" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TYPE "subtitles_type_enum" AS ENUM('Subtitle', 'Audio')`);
+        await queryRunner.query(`CREATE TABLE "subtitles" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "language" character varying NOT NULL, "url" character varying NOT NULL, "type" "subtitles_type_enum" NOT NULL DEFAULT 'Subtitle', "movieId" uuid, CONSTRAINT "PK_9ac397e12396227e34ba97af99e" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "movie-types" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_0d5c79e98bbc0d18c97ab047442" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "movies" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "title" character varying NOT NULL, "description" text NOT NULL, "thumbnailUrl" character varying NOT NULL, "videoUrl" character varying NOT NULL, "duration" character varying NOT NULL, "releaseDate" date NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_c5b2c134e871bfd1c2fe7cc3705" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "profiles" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying NOT NULL, "avatarUrl" character varying, "isKids" boolean NOT NULL DEFAULT false, "userId" uuid, CONSTRAINT "PK_8e520eb4da7dc01d0e190447c8e" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "favorites" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "userId" uuid, "movieId" uuid, "profileId" uuid, CONSTRAINT "PK_890818d27523748dd36a4d1bdc8" PRIMARY KEY ("id"))`);
-        await queryRunner.query(`CREATE TABLE "subscription_plans" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying NOT NULL, "price" numeric NOT NULL, "videoQuality" character varying NOT NULL, "maxDevices" integer NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_9ab8fe6918451ab3d0a4fb6bb0c" PRIMARY KEY ("id"))`);
-        await queryRunner.query(`CREATE TABLE "payments" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "amount" numeric NOT NULL, "paymentMethod" character varying NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "userId" uuid, "planId" uuid, CONSTRAINT "PK_197ab7af18c93fbb0c9b28b4a59" PRIMARY KEY ("id"))`);
-        await queryRunner.query(`CREATE TYPE "public"."notifications_type_enum" AS ENUM('success', 'error', 'info', 'warning')`);
-        await queryRunner.query(`CREATE TABLE "notifications" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "type" "public"."notifications_type_enum" NOT NULL, "title" character varying NOT NULL, "message" character varying NOT NULL, "isRead" boolean NOT NULL DEFAULT false, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "userId" uuid, CONSTRAINT "PK_6a72c3c0f683f6462415e653c3a" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TABLE "subscription_plans" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying NOT NULL, "price" numeric NOT NULL, "currency" character varying NOT NULL DEFAULT 'VND', "interval" character varying NOT NULL DEFAULT 'tháng', "quality" character varying NOT NULL, "devices" integer NOT NULL, "downloads" integer NOT NULL, "stripePriceId" character varying NOT NULL, "popular" boolean NOT NULL DEFAULT false, "features" text array NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_9ab8fe6918451ab3d0a4fb6bb0c" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TABLE "payments" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "amount" numeric NOT NULL, "currency" character varying(10) NOT NULL, "status" character varying NOT NULL DEFAULT 'pending', "stripeSessionId" character varying, "stripePaymentIntentId" character varying, "paymentMethod" character varying, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "userId" uuid, "planId" uuid, CONSTRAINT "PK_197ab7af18c93fbb0c9b28b4a59" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TYPE "notifications_type_enum" AS ENUM('success', 'error', 'info', 'warning')`);
+        await queryRunner.query(`CREATE TABLE "notifications" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "type" "notifications_type_enum" NOT NULL, "title" character varying, "message" character varying, "movieId" character varying, "movieTitle" character varying, "movieImage" character varying, "isRead" boolean NOT NULL DEFAULT false, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "userId" uuid, CONSTRAINT "PK_6a72c3c0f683f6462415e653c3a" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "users" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "email" character varying NOT NULL, "password" character varying NOT NULL, "phoneNumber" character varying NOT NULL, "isAdmin" boolean NOT NULL DEFAULT false, "isActive" boolean NOT NULL DEFAULT false, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "planId" uuid, CONSTRAINT "UQ_97672ac88f789774dd47f7c8be3" UNIQUE ("email"), CONSTRAINT "PK_a3ffb1c0c8416b9fc6f907b7433" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "refresh_tokens" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "token" character varying NOT NULL, "expiresAt" TIMESTAMP NOT NULL, "userId" uuid, CONSTRAINT "PK_7d8bee0204106019488c4c50ffa" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "movies_genres" ("moviesId" uuid NOT NULL, "genresId" uuid NOT NULL, CONSTRAINT "PK_a5d3ebb8cdde7f76f199db8d1c9" PRIMARY KEY ("moviesId", "genresId"))`);
@@ -86,22 +86,22 @@ export class Init1748831356923 implements MigrationInterface {
         await queryRunner.query(`ALTER TABLE "watch_histories" DROP CONSTRAINT "FK_0d3c1acce88c08e1de10bd482ad"`);
         await queryRunner.query(`ALTER TABLE "reviews" DROP CONSTRAINT "FK_e50936dfdefcaf083d446baca11"`);
         await queryRunner.query(`ALTER TABLE "reviews" DROP CONSTRAINT "FK_7ed5659e7139fc8bc039198cc1f"`);
-        await queryRunner.query(`DROP INDEX "public"."IDX_049c4553f88a6c5ac9ac7fbdb4"`);
-        await queryRunner.query(`DROP INDEX "public"."IDX_d0db4ae347a31eb25e97efb257"`);
+        await queryRunner.query(`DROP INDEX "IDX_049c4553f88a6c5ac9ac7fbdb4"`);
+        await queryRunner.query(`DROP INDEX "IDX_d0db4ae347a31eb25e97efb257"`);
         await queryRunner.query(`DROP TABLE "movies_directors"`);
-        await queryRunner.query(`DROP INDEX "public"."IDX_7e36ac9a9ca0e920c39c4c7f45"`);
-        await queryRunner.query(`DROP INDEX "public"."IDX_d8b1b832dc2097cddfd6e9ef32"`);
+        await queryRunner.query(`DROP INDEX "IDX_7e36ac9a9ca0e920c39c4c7f45"`);
+        await queryRunner.query(`DROP INDEX "IDX_d8b1b832dc2097cddfd6e9ef32"`);
         await queryRunner.query(`DROP TABLE "movies_actors"`);
-        await queryRunner.query(`DROP INDEX "public"."IDX_754c0a1a503026c2d6fdef9322"`);
-        await queryRunner.query(`DROP INDEX "public"."IDX_308b66f208ba35af622801eab3"`);
+        await queryRunner.query(`DROP INDEX "IDX_754c0a1a503026c2d6fdef9322"`);
+        await queryRunner.query(`DROP INDEX "IDX_308b66f208ba35af622801eab3"`);
         await queryRunner.query(`DROP TABLE "movies_movie-types"`);
-        await queryRunner.query(`DROP INDEX "public"."IDX_91d9e376de22a2324b93d6eae6"`);
-        await queryRunner.query(`DROP INDEX "public"."IDX_490f84585d33963d5d7bdc34ec"`);
+        await queryRunner.query(`DROP INDEX "IDX_91d9e376de22a2324b93d6eae6"`);
+        await queryRunner.query(`DROP INDEX "IDX_490f84585d33963d5d7bdc34ec"`);
         await queryRunner.query(`DROP TABLE "movies_genres"`);
         await queryRunner.query(`DROP TABLE "refresh_tokens"`);
         await queryRunner.query(`DROP TABLE "users"`);
         await queryRunner.query(`DROP TABLE "notifications"`);
-        await queryRunner.query(`DROP TYPE "public"."notifications_type_enum"`);
+        await queryRunner.query(`DROP TYPE "notifications_type_enum"`);
         await queryRunner.query(`DROP TABLE "payments"`);
         await queryRunner.query(`DROP TABLE "subscription_plans"`);
         await queryRunner.query(`DROP TABLE "favorites"`);
@@ -109,7 +109,7 @@ export class Init1748831356923 implements MigrationInterface {
         await queryRunner.query(`DROP TABLE "movies"`);
         await queryRunner.query(`DROP TABLE "movie-types"`);
         await queryRunner.query(`DROP TABLE "subtitles"`);
-        await queryRunner.query(`DROP TYPE "public"."subtitles_type_enum"`);
+        await queryRunner.query(`DROP TYPE "subtitles_type_enum"`);
         await queryRunner.query(`DROP TABLE "seasons"`);
         await queryRunner.query(`DROP TABLE "episodes"`);
         await queryRunner.query(`DROP TABLE "directors"`);

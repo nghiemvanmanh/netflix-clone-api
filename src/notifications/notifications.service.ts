@@ -1,6 +1,6 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, DataSource } from 'typeorm';
+import { Repository } from 'typeorm';
 import { CreateNotificationDto } from './dto/create-notification.dto';
 import { Notification } from 'database/entities/notification.entity';
 
@@ -9,48 +9,66 @@ export class NotificationsService {
   constructor(
     @InjectRepository(Notification)
     private readonly notificationRepo: Repository<Notification>,
-    private readonly dataSource: DataSource,
   ) {}
 
-  async create(dto: CreateNotificationDto): Promise<Notification> {
-    const notification = this.notificationRepo.create(dto);
+  async create(
+    dto: CreateNotificationDto,
+    profileId: string,
+  ): Promise<Notification> {
+    const notification = this.notificationRepo.create({
+      ...dto,
+      profile: { id: profileId },
+    });
     return await this.notificationRepo.save(notification);
   }
 
-  async markAsRead(id: string): Promise<void> {
-    const result = await this.notificationRepo.update(id, {
-      isRead: true,
+  async markAsRead(id: string, profileId: string): Promise<void> {
+    const notifications = await this.notificationRepo.find({
+      where: {
+        id,
+        isRead: false,
+        profile: { id: profileId },
+      },
     });
 
-    if (result.affected === 0) {
-      throw new NotFoundException(`Notification with id ${id} not found`);
+    for (const notification of notifications) {
+      notification.isRead = true;
     }
+    await this.notificationRepo.save(notifications);
   }
 
-  async markAllAsRead(): Promise<void> {
-    await this.notificationRepo.update(
-      {
+  async markAllAsRead(profileId: string): Promise<void> {
+    const notifications = await this.notificationRepo.find({
+      where: {
         isRead: false,
+        profile: { id: profileId },
       },
-      {
-        isRead: true,
-      },
-    );
+    });
+
+    for (const notification of notifications) {
+      notification.isRead = true;
+    }
+    await this.notificationRepo.save(notifications);
   }
 
-  async delete(id: string) {
-    return await this.notificationRepo.delete(id);
+  async delete(id: string, profileId: string): Promise<void> {
+    await this.notificationRepo.delete({
+      id,
+      profile: { id: profileId },
+    });
   }
 
-  async deleteAll(): Promise<void> {
+  async deleteAll(profileId: string): Promise<void> {
     await this.notificationRepo
       .createQueryBuilder()
       .delete()
-      .where('1=1') // Deletes all notifications
+      .where('profileId = :profileId', { profileId })
       .execute();
   }
-  async findAll(): Promise<Notification[]> {
+
+  async findAll(profileId?: string): Promise<Notification[]> {
     return this.notificationRepo.find({
+      where: { profile: { id: profileId } },
       order: { createdAt: 'DESC' },
     });
   }

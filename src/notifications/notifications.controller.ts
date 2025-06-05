@@ -3,9 +3,10 @@ import {
   Post,
   Body,
   Patch,
-  Param,
   Delete,
   Get,
+  Param,
+  Query,
 } from '@nestjs/common';
 import { CreateNotificationDto } from './dto/create-notification.dto';
 import { NotificationsService } from './notifications.service';
@@ -15,31 +16,35 @@ export class NotificationsController {
   constructor(private readonly notificationsService: NotificationsService) {}
 
   @Post()
-  create(@Body() dto: CreateNotificationDto) {
-    return this.notificationsService.create(dto);
+  create(
+    @Body() dto: CreateNotificationDto,
+    @Query('profileId') profileId: string,
+  ) {
+    return this.notificationsService.create(dto, profileId);
   }
 
   @Patch(':id/read')
-  markAsRead(@Param('id') id: string) {
-    return this.notificationsService.markAsRead(id);
+  markAsRead(@Param('id') id: string, @Query('profileId') profileId: string) {
+    return this.notificationsService.markAsRead(id, profileId);
   }
 
   @Patch('read-all')
-  markAllAsRead() {
-    return this.notificationsService.markAllAsRead();
+  markAllAsRead(@Query('profileId') profileId: string) {
+    return this.notificationsService.markAllAsRead(profileId);
   }
 
   @Delete(':id')
-  delete(@Param('id') id: string) {
-    return this.notificationsService.delete(id);
+  delete(@Param('id') id: string, @Query('profileId') profileId: string) {
+    return this.notificationsService.delete(id, profileId);
   }
 
   @Delete()
-  deleteAll() {
-    return this.notificationsService.deleteAll();
+  deleteAll(@Query('profileId') profileId: string) {
+    return this.notificationsService.deleteAll(profileId);
   }
+
   @Get()
-  findAll() {
-    return this.notificationsService.findAll();
+  findAll(@Query('profileId') profileId: string) {
+    return this.notificationsService.findAll(profileId);
   }
 }

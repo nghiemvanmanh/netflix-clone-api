@@ -23,11 +23,11 @@
     "typeorm": "typeorm-ts-node-commonjs",
     "migration:revert": "npm run typeorm migration:revert -- -d src/data-source.ts",
     "migration:run:local": "dotenv -e .env.local -- ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:run -d typeorm.config.ts",
-    "migration:generate:local": "dotenv -e .env.local -- ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:generate src/database/migrations/local/%npm_config_name% -d typeorm.config.ts",
+    "migration:generate:local": "dotenv -e .env.local -- ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:generate database/migrations/%npm_config_name% -d typeorm.config.ts",
     "migration:revert:local": "dotenv -e .env.local -- ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:revert -d typeorm.config.ts",
-    "migration:run:prod": "dotenv -e .env.production -- ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:run -d typeorm.config.ts",
-    "migration:generate:prod": "dotenv -e .env.production -- ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:generate src/database/migrations/prod/%npm_config_name% -d typeorm.config.ts",
-    "migration:revert:prod": "dotenv -e .env.production -- ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:revert -d typeorm.config.ts"
+    "migration:run:prod": "dotenv -e .env.prod -- ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:run -d typeorm.config.ts",
+    "migration:generate:prod": "dotenv -e .env.prod -- ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:generate database/migrations/%npm_config_name% -d typeorm.config.ts",
+    "migration:revert:prod": "dotenv -e .env.prod -- ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:revert -d typeorm.config.ts"
   },
   "dependencies": {
     "@nestjs/cli": "^11.0.0",

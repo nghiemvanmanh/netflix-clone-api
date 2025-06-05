@@ -22,4 +22,6 @@ export class CreateUserDto {
   })
   @IsNotEmpty()
   phoneNumber: string;
+
+  verificationCode: string;
 }

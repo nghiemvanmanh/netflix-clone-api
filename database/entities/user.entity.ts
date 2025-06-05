@@ -36,13 +36,13 @@ export class User {
   @OneToMany(() => Favorite, (fav) => fav.user)
   favorites: Favorite[];
 
-  @OneToMany(() => Review, (review) => review.user)
+  @OneToMany(() => Review, (review) => review.user, { onDelete: 'CASCADE' })
   reviews: Review[];
 
   @ManyToOne(() => SubscriptionPlan)
   plan: SubscriptionPlan;
 
-  @OneToMany(() => Payment, (payment) => payment.user)
+  @OneToMany(() => Payment, (payment) => payment.user, { onDelete: 'CASCADE' })
   payments: Payment[];
 
   @OneToMany(() => Profile, (profile) => profile.user, { onDelete: 'CASCADE' })

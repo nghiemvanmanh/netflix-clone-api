@@ -4,7 +4,7 @@ import { UpdateMovieDto } from './dto/update-movie.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Movie } from 'database/entities/movie.entity';
 import { Genre } from 'database/entities/genre.entity';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { MovieType } from 'database/entities/movie-type.entity';
 import { Actor } from 'database/entities/actor.entity';
 import { Director } from 'database/entities/director.entity';
@@ -25,12 +25,18 @@ export class MoviesService {
     private readonly directorRepository: Repository<Director>,
   ) {}
   async create(dto: CreateMovieDto) {
-    const genres = await this.genreRepository.findByIds(dto.genreIds);
-    const movieTypes = await this.movieTypeRepository.findByIds(
-      dto.movieTypeIds,
-    );
-    const actors = await this.actorRepository.findByIds(dto.actorIds);
-    const directors = await this.directorRepository.findByIds(dto.directorIds);
+    const genres = await this.genreRepository.findBy({
+      id: In(dto.genreIds),
+    });
+    const movieTypes = await this.movieTypeRepository.findBy({
+      id: In(dto.movieTypeIds),
+    });
+    const actors = await this.actorRepository.findBy({
+      id: In(dto.actorIds),
+    });
+    const directors = await this.directorRepository.findBy({
+      id: In(dto.directorIds),
+    });
 
     const movie = this.movieRepository.create({
       ...dto,
@@ -52,16 +58,20 @@ export class MoviesService {
 
     // Lấy các entity liên quan
     const genres = updateMovieDto.genreIds
-      ? await this.genreRepository.findByIds(updateMovieDto.genreIds)
+      ? await this.genreRepository.findBy({ id: In(updateMovieDto.genreIds) })
       : [];
     const movieTypes = updateMovieDto.movieTypeIds
-      ? await this.movieTypeRepository.findByIds(updateMovieDto.movieTypeIds)
+      ? await this.movieTypeRepository.findBy({
+          id: In(updateMovieDto.movieTypeIds),
+        })
       : [];
     const actors = updateMovieDto.actorIds
-      ? await this.actorRepository.findByIds(updateMovieDto.actorIds)
+      ? await this.actorRepository.findBy({ id: In(updateMovieDto.actorIds) })
       : [];
     const directors = updateMovieDto.directorIds
-      ? await this.directorRepository.findByIds(updateMovieDto.directorIds)
+      ? await this.directorRepository.findBy({
+          id: In(updateMovieDto.directorIds),
+        })
       : [];
 
     // Gán lại các trường
@@ -121,14 +131,10 @@ export class MoviesService {
   }
 
   async getMovieById(id: string) {
-    const movie = await this.movieRepository
-      .createQueryBuilder('movie')
-      .leftJoinAndSelect('movie.genres', 'genres')
-      .leftJoinAndSelect('movie.movieTypes', 'movieTypes')
-      .leftJoinAndSelect('movie.actors', 'actors')
-      .leftJoinAndSelect('movie.directors', 'directors')
-      .where('movie.id = :id', { id })
-      .getOne();
+    const movie = await this.movieRepository.findOne({
+      where: { id },
+      relations: ['genres', 'movieTypes', 'actors', 'directors'],
+    });
 
     if (!movie) {
       throw new NotFoundException('Không tìm thấy phim');

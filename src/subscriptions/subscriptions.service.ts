@@ -10,6 +10,7 @@ import * as nodemailer from 'nodemailer';
 import * as escapeHtml from 'escape-html';
 import { MAILER_TOKEN } from 'src/mailer/mailer.providers';
 import { EnvService } from 'src/env/env.service';
+import * as jwt from 'jsonwebtoken';
 @Injectable()
 export class SubscriptionsService {
   private stripe: Stripe;
@@ -33,6 +34,48 @@ export class SubscriptionsService {
       throw new Error('Missing Stripe secret key!');
     }
     this.stripe = new Stripe(stripeKey);
+  }
+  /**
+   * Tạo JWT token cho người dùng
+   * @param user Người dùng đã đăng nhập
+   * @returns JWT token
+   */
+  private createJwtToken(user: User): string {
+    const payload = {
+      id: user.id,
+      email: user.email,
+      phone: user.phoneNumber,
+      isActive: user.isActive,
+      isAdmin: user.isAdmin,
+    };
+
+    return jwt.sign(payload, this.env.get('SECRET_KEY'), {
+      expiresIn: '1h',
+    });
+  }
+  /**
+   * Gửi email xác nhận thanh toán thành công
+   * @param user Người dùng đã thanh toán
+   * @param plan Gói đăng ký đã thanh toán
+   * @param payment Thông tin thanh toán
+   */
+  private async sendPaymentConfirmationEmail(
+    user: User,
+    plan: SubscriptionPlan,
+    payment: Payment,
+  ) {
+    await this.transporter.sendMail({
+      from: this.env.get('EMAIL_USER'),
+      to: user.email,
+      subject: 'Xác nhận thanh toán thành công',
+      html: `
+        <h3>Chào ${escapeHtml(user.email)},</h3>
+        <p>Bạn đã thanh toán thành công gói <strong>${escapeHtml(plan.name)}</strong>.</p>
+        <p><strong>Số tiền:</strong> ${payment.amount} ${payment.currency.toUpperCase()}</p>
+        <p><strong>Thời gian:</strong> ${new Date().toLocaleString('vi-VN')}</p>
+        <p>Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi.</p>
+      `,
+    });
   }
 
   async createCheckoutSession(data: {
@@ -78,6 +121,7 @@ export class SubscriptionsService {
     paymentId?: string;
     planName?: string;
     planText?: string[];
+    accessToken?: string;
   }> {
     try {
       const session = await this.stripe.checkout.sessions.retrieve(sessionId, {
@@ -90,22 +134,25 @@ export class SubscriptionsService {
 
       const existingPayment = await this.paymentRepository.findOne({
         where: { stripeSessionId: sessionId },
-        relations: ['plan'],
+        relations: ['plan', 'user'],
       });
-      if (existingPayment)
+
+      if (existingPayment) {
+        const accessToken = this.createJwtToken(existingPayment.user);
         return {
           success: true,
           paymentId: existingPayment.id,
           planName: existingPayment.plan.name,
           planText: existingPayment.plan.features,
+          accessToken,
         };
+      }
 
       const { userId, planId } = session.metadata ?? {};
       if (!userId || !planId) {
         throw new BadRequestException('Missing metadata (userId or planId)');
       }
 
-      // Lấy user và plan song song
       const [user, plan] = await Promise.all([
         this.userRepository.findOne({ where: { id: userId } }),
         this.subscriptionRepository.findOne({ where: { id: planId } }),
@@ -115,7 +162,6 @@ export class SubscriptionsService {
       }
 
       const paymentIntent = session.payment_intent as Stripe.PaymentIntent;
-
       const payment = this.paymentRepository.create({
         user,
         plan,
@@ -127,38 +173,29 @@ export class SubscriptionsService {
         paymentMethod: paymentIntent?.payment_method_types?.[0] ?? null,
       });
 
-      // Lưu payment và cập nhật user active song song
+      user.isActive = true;
       await Promise.all([
         this.paymentRepository.save(payment),
-        (async () => {
-          user.isActive = true;
-          await this.userRepository.save(user);
-        })(),
+        this.userRepository.save(user),
       ]);
 
-      await this.transporter.sendMail({
-        from: this.env.get('EMAIL_USER'),
-        to: user.email,
-        subject: 'Xác nhận thanh toán thành công',
-        html: `
-        <h3>Chào ${escapeHtml(user.email)},</h3>
-        <p>Bạn đã thanh toán thành công gói <strong>${escapeHtml(plan.name)}</strong>.</p>
-        <p><strong>Số tiền:</strong> ${payment.amount} ${payment.currency.toUpperCase()}</p>
-        <p><strong>Thời gian:</strong> ${new Date().toLocaleString('vi-VN')}</p>
-        <p>Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi.</p>
-      `,
-      });
+      await this.sendPaymentConfirmationEmail(user, plan, payment);
+
+      const accessToken = this.createJwtToken(user);
 
       return {
         success: true,
         paymentId: payment.id,
         planName: plan.name,
         planText: plan.features,
+        accessToken,
       };
     } catch (error) {
       console.error('Verify payment error:', error);
       throw new BadRequestException(
-        `Failed to verify payment: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        `Failed to verify payment: ${
+          error instanceof Error ? error.message : 'Unknown error'
+        }`,
       );
     }
   }

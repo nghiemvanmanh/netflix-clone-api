@@ -5,6 +5,7 @@ import { compareSync } from 'bcrypt';
 import { RefreshToken } from 'database/entities/refresh-token.entity';
 
 import { User } from 'database/entities/user.entity';
+import { ONE_DAY_IN_MS } from 'src/constants/date';
 
 import { Repository } from 'typeorm';
 
@@ -28,6 +29,8 @@ export class AuthService {
           id: user.id,
           email: user.email,
           phone: user.phoneNumber,
+          isActive: user.isActive,
+          isAdmin: user.isAdmin,
         };
 
         const [accessToken, refreshToken] = await Promise.all([
@@ -37,7 +40,6 @@ export class AuthService {
           }),
         ]);
 
-        const ONE_DAY_IN_MS = 24 * 60 * 60 * 1000;
         await this.refreshTokenRepository.save({
           user,
           token: refreshToken,

@@ -30,6 +30,18 @@ export class UsersController {
     return await this.usersService.register(newUSer);
   }
 
+  @Public()
+  @Post('send-code')
+  sendVerificationCode(@Body('email') email: string): Promise<void> {
+    return this.usersService.sendVerificationCode(email);
+  }
+
+  @Public()
+  @Post('verify')
+  verifyEmail(@Body() body: { email: string; code: string }): Promise<boolean> {
+    return this.usersService.verifyCode(body.email, body.code);
+  }
+
   @UseGuards(UserGuard)
   @UseGuards(AdminGuard)
   @Put()

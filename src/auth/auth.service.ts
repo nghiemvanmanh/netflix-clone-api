@@ -6,7 +6,7 @@ import { RefreshToken } from 'database/entities/refresh-token.entity';
 
 import { User } from 'database/entities/user.entity';
 import { ONE_DAY_IN_MS } from 'src/constants/date';
-
+import { addDays } from 'date-fns';
 import { Repository } from 'typeorm';
 
 @Injectable()
@@ -43,7 +43,7 @@ export class AuthService {
         await this.refreshTokenRepository.save({
           user,
           token: refreshToken,
-          expiresAt: new Date(Date.now() + ONE_DAY_IN_MS),
+          expiresAt: addDays(new Date(Date.now()), 1),
         });
 
         return {

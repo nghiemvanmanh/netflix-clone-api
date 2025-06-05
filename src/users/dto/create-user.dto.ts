@@ -10,6 +10,7 @@ export class CreateUserDto {
   @IsEmail()
   @IsNotEmpty()
   email: string;
+
   @IsNotEmpty()
   @MinLength(6, { message: 'Mật khẩu phải có ít nhất 6 ký tự' })
   @Matches(/^(?=.*[A-Za-z])(?=.*\d)/, {
@@ -23,5 +24,6 @@ export class CreateUserDto {
   @IsNotEmpty()
   phoneNumber: string;
 
+  @IsNotEmpty()
   verificationCode: string;
 }

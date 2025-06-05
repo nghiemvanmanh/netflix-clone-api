@@ -17,14 +17,14 @@ import { MAILER_TOKEN } from 'src/mailer/mailer.providers';
 import { VerificationCode } from 'database/entities/verification-code.entity';
 import * as escapeHtml from 'escape-html';
 import { EnvService } from 'src/env/env.service';
-import { SEVEN_HOURS_IN_MS, TEN_MINUTES_IN_MS } from 'src/constants/date';
+import { addMinutes, addHours, isAfter, parseISO } from 'date-fns';
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
     @InjectRepository(VerificationCode)
-    private codeRepository: Repository<VerificationCode>,
+    private verificationRepository: Repository<VerificationCode>,
     @Inject(MAILER_TOKEN)
     private transporter: nodemailer.Transporter,
     private readonly env: EnvService, // Giả sử bạn có một service để lấy biến môi trường
@@ -33,8 +33,8 @@ export class UsersService {
   async sendVerificationCode(email: string): Promise<void> {
     const code = Math.floor(100000 + Math.random() * 900000).toString(); // 6 chữ số
 
-    const codeEntity = this.codeRepository.create({ email, code });
-    await this.codeRepository.save(codeEntity);
+    const codeEntity = this.verificationRepository.create({ email, code });
+    await this.verificationRepository.save(codeEntity);
 
     const mailOptions = {
       from: this.env.get('EMAIL_USER'),
@@ -94,23 +94,26 @@ export class UsersService {
   }
 
   async verifyCode(email: string, code: string): Promise<boolean> {
-    const record = await this.codeRepository.findOne({
+    const record = await this.verificationRepository.findOne({
       where: { email, code, isUsed: false },
       order: { createdAt: 'DESC' },
     });
+    console.log({ 'Kiểm tra mã xác minh': { email, code, record } });
     if (!record) return false;
-    const createdAt = new Date(record.createdAt);
-    const expired = new Date(
-      createdAt.getTime() + SEVEN_HOURS_IN_MS + TEN_MINUTES_IN_MS,
-    );
 
-    if (new Date() > expired) {
+    const createdAt =
+      typeof record.createdAt === 'string'
+        ? parseISO(record.createdAt)
+        : new Date(record.createdAt);
+
+    const expiredAt = addMinutes(addHours(createdAt, 7), 10);
+    if (isAfter(new Date(), expiredAt)) {
       return false;
     }
 
     record.isUsed = true;
     console.log({ 'Đã sử dụng mã xác minh:': record });
-    await this.codeRepository.save(record);
+    await this.verificationRepository.save(record);
     return true;
   }
 
@@ -122,14 +125,12 @@ export class UsersService {
     if (user) {
       throw new ConflictException(`Email ${newUser.email} đã được đăng ký`);
     }
-
     const isValidCode = await this.verifyCode(
       newUser.email,
       newUser.verificationCode,
     );
-
     if (!isValidCode) {
-      throw new BadRequestException('Mã xác minh không hợp lệ hoặc đã hết hạn');
+      throw new BadRequestException(`Mã xác minh không hợp lệ hoặc đã hết hạn`);
     }
 
     const hashPass = await bcrypt.hash(newUser.password, 10);

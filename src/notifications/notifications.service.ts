@@ -38,24 +38,21 @@ export class NotificationsService {
   }
 
   async markAllAsRead(profileId: string): Promise<void> {
-    const notifications = await this.notificationRepo.find({
-      where: {
-        isRead: false,
-        profile: { id: profileId },
-      },
-    });
-
-    for (const notification of notifications) {
-      notification.isRead = true;
-    }
-    await this.notificationRepo.save(notifications);
+    await this.notificationRepo
+      .createQueryBuilder()
+      .update('notifications')
+      .set({ isRead: true })
+      .where('isRead = false AND profileId = :profileId', { profileId })
+      .execute();
   }
 
   async delete(id: string, profileId: string): Promise<void> {
-    await this.notificationRepo.delete({
-      id,
-      profile: { id: profileId },
-    });
+    await this.notificationRepo
+      .createQueryBuilder()
+      .delete()
+      .from('notifications') // hoặc .from(NotificationEntity)
+      .where('id = :id AND profileId = :profileId', { id, profileId })
+      .execute();
   }
 
   async deleteAll(profileId: string): Promise<void> {

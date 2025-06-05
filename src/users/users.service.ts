@@ -98,7 +98,7 @@ export class UsersService {
       where: { email, code, isUsed: false },
       order: { createdAt: 'DESC' },
     });
-    console.log({ 'Kiểm tra mã xác minh': { email, code, record } });
+
     if (!record) return false;
 
     const createdAt =
@@ -112,7 +112,7 @@ export class UsersService {
     }
 
     record.isUsed = true;
-    console.log({ 'Đã sử dụng mã xác minh:': record });
+
     await this.verificationRepository.save(record);
     return true;
   }

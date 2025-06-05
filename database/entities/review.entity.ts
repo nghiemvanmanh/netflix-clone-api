@@ -6,13 +6,16 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { User } from './user.entity';
 import { Movie } from './movie.entity';
+import { Profile } from './profile.entity';
 
 @Entity('reviews')
 export class Review {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
+  @Column()
+  name: string;
 
   @Column('text')
   content: string;
@@ -20,8 +23,8 @@ export class Review {
   @Column({ type: 'int', default: 0 })
   rating: number; // 1–5
 
-  @ManyToOne(() => User, (user) => user.reviews)
-  user: User;
+  @ManyToOne(() => Profile, (profile) => profile.reviews)
+  profile: Profile;
 
   @ManyToOne(() => Movie, (movie) => movie.reviews)
   movie: Movie;

@@ -9,6 +9,7 @@ import { User } from './user.entity';
 import { Favorite } from './favorite.entity';
 import { Notification } from './notification.entity';
 import { WatchHistory } from './history.entity';
+import { Review } from './review.entity';
 
 @Entity('profiles')
 export class Profile {
@@ -28,6 +29,10 @@ export class Profile {
   @OneToMany(() => WatchHistory, (history) => history.profile)
   watchHistory: WatchHistory[];
 
+  @ManyToOne(() => Review, (review) => review.profile, {
+    onDelete: 'CASCADE',
+  })
+  reviews: Review[];
   @Column()
   name: string;
 

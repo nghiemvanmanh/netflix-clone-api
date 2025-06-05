@@ -41,4 +41,9 @@ export class MoviesController {
   getMovieById(@Param('id') id: string) {
     return this.movieService.getMovieById(id);
   }
+
+  @Get('/:movieId/similar')
+  getSimilarMovies(@Param('movieId') movieId: string) {
+    return this.movieService.getsimilarMovies(movieId);
+  }
 }

@@ -142,4 +142,25 @@ export class MoviesService {
 
     return movie;
   }
+
+  async getsimilarMovies(movieId: string, limit: number = 6): Promise<Movie[]> {
+    const movie = await this.movieRepository.findOne({
+      where: { id: movieId },
+      relations: ['genres'],
+    });
+
+    if (!movie) {
+      throw new NotFoundException('Không tìm thấy phim');
+    }
+
+    const genreIds = movie.genres.map((genre) => genre.id);
+
+    return this.movieRepository
+      .createQueryBuilder('movie')
+      .leftJoinAndSelect('movie.genres', 'genres')
+      .where('movie.id != :id', { id: movieId })
+      .andWhere('genres.id IN (:...genreIds)', { genreIds })
+      .limit(limit)
+      .getMany();
+  }
 }

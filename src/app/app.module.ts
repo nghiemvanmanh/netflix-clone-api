@@ -17,6 +17,7 @@ import { NotificationsModule } from 'src/notifications/notifications.module';
 import { SubscriptionsModule } from 'src/subscriptions/subscriptions.module';
 import { mailerProvider } from 'src/mailer/mailer.providers';
 import { EnvModule } from 'src/env/env.module';
+import { ReviewsModule } from 'src/reviews/reviews.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { EnvModule } from 'src/env/env.module';
     MyListsModule,
     NotificationsModule,
     SubscriptionsModule,
+    ReviewsModule,
   ],
   controllers: [AppController],
   providers: [AppService, mailerProvider],

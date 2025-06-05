@@ -8,7 +8,6 @@ import {
   ManyToOne,
 } from 'typeorm';
 import { Favorite } from './favorite.entity';
-import { Review } from './review.entity';
 import { SubscriptionPlan } from './plan.entity';
 import { Payment } from './payment.entity';
 import { Profile } from './profile.entity';
@@ -35,9 +34,6 @@ export class User {
 
   @OneToMany(() => Favorite, (fav) => fav.user)
   favorites: Favorite[];
-
-  @OneToMany(() => Review, (review) => review.user, { onDelete: 'CASCADE' })
-  reviews: Review[];
 
   @ManyToOne(() => SubscriptionPlan)
   plan: SubscriptionPlan;

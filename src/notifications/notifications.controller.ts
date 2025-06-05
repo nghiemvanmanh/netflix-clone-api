@@ -18,7 +18,7 @@ export class NotificationsController {
   @Post()
   create(
     @Body() dto: CreateNotificationDto,
-    @Query('profileId') profileId: string,
+    @Body('profileId') profileId: string,
   ) {
     return this.notificationsService.create(dto, profileId);
   }
@@ -29,7 +29,7 @@ export class NotificationsController {
   }
 
   @Patch('read-all')
-  markAllAsRead(@Query('profileId') profileId: string) {
+  markAllAsRead(@Body('profileId') profileId: string) {
     return this.notificationsService.markAllAsRead(profileId);
   }
 

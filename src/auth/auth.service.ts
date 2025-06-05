@@ -5,7 +5,6 @@ import { compareSync } from 'bcrypt';
 import { RefreshToken } from 'database/entities/refresh-token.entity';
 
 import { User } from 'database/entities/user.entity';
-import { ONE_DAY_IN_MS } from 'src/constants/date';
 import { addDays } from 'date-fns';
 import { Repository } from 'typeorm';
 

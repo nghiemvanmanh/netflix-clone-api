@@ -30,16 +30,30 @@ export class UsersService {
     private readonly env: EnvService, // Giả sử bạn có một service để lấy biến môi trường
   ) {}
 
-  async sendVerificationCode(email: string): Promise<void> {
+  async sendVerificationCode(user: CreateUserDto): Promise<void> {
+    const exists = await this.userRepository.findOne({
+      where: { email: user.email },
+    });
+
+    if (exists) {
+      throw new ConflictException(`Email đã được đăng ký`);
+    }
+    await this.verificationRepository.update(
+      { email: user.email, isUsed: false },
+      { isUsed: true },
+    );
     const code = Math.floor(100000 + Math.random() * 900000).toString(); // 6 chữ số
 
-    const codeEntity = this.verificationRepository.create({ email, code });
+    const codeEntity = this.verificationRepository.create({
+      email: user.email,
+      code,
+    });
     await this.verificationRepository.save(codeEntity);
 
     const mailOptions = {
       from: this.env.get('EMAIL_USER'),
-      to: email,
-      subject: 'Mã xác minh đăng ký',
+      to: user.email,
+      subject: 'Mã xác minh đăng ký tài khoản Netflop',
       html: `
       <div style="
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
@@ -60,7 +74,7 @@ export class UsersService {
           🔒 Mã Xác Minh Đăng Ký
         </h2>
         <p>Xin chào,</p>
-        <p>Bạn vừa yêu cầu mã xác minh cho việc đăng ký tài khoản.</p>
+        <p>Bạn vừa yêu cầu mã xác minh cho việc đăng ký tài khoản Netflop. Mã xác minh của bạn là:</p>
         <div style="
           background-color: #fff; 
           border: 2px dashed #e50914; 
@@ -118,13 +132,6 @@ export class UsersService {
   }
 
   async register(newUser: CreateUserDto): Promise<User> {
-    const user = await this.userRepository.findOne({
-      where: { email: newUser.email },
-    });
-
-    if (user) {
-      throw new ConflictException(`Email ${newUser.email} đã được đăng ký`);
-    }
     const isValidCode = await this.verifyCode(
       newUser.email,
       newUser.verificationCode,

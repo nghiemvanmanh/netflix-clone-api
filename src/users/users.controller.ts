@@ -32,8 +32,8 @@ export class UsersController {
 
   @Public()
   @Post('send-code')
-  sendVerificationCode(@Body('email') email: string): Promise<void> {
-    return this.usersService.sendVerificationCode(email);
+  sendVerificationCode(@Body() body: CreateUserDto): Promise<void> {
+    return this.usersService.sendVerificationCode(body);
   }
 
   @Public()

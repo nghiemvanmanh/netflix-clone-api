@@ -72,7 +72,7 @@ export class SubscriptionsService {
       <div style="font-family: Arial, sans-serif; color: #333;">
         <h2 style="color: #2c3e50;">Xác nhận thanh toán thành công</h2>
         <p>Xin chào <strong>${escapeHtml(user.email)}</strong>,</p>
-        <p>Cảm ơn bạn đã tin tưởng và sử dụng dịch vụ của chúng tôi. Chúng tôi rất vui thông báo rằng bạn đã thanh toán thành công gói Netflix <strong>${escapeHtml(plan.name)}</strong>.</p>
+        <p>Cảm ơn bạn đã tin tưởng và sử dụng dịch vụ của chúng tôi. Chúng tôi rất vui thông báo rằng bạn đã thanh toán thành công gói Netflop <strong>${escapeHtml(plan.name)}</strong>.</p>
 
         <table style="width: 100%; max-width: 400px; border-collapse: collapse; margin: 20px 0;">
           <tr>

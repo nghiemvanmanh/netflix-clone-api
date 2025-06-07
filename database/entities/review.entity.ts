@@ -23,7 +23,9 @@ export class Review {
   @Column({ type: 'int', default: 0 })
   rating: number; // 1–5
 
-  @ManyToOne(() => Profile, (profile) => profile.reviews)
+  @ManyToOne(() => Profile, (profile) => profile.reviews, {
+    onDelete: 'CASCADE',
+  })
   profile: Profile;
 
   @ManyToOne(() => Movie, (movie) => movie.reviews)

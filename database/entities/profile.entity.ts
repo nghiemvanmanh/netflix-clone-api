@@ -16,12 +16,12 @@ export class Profile {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => User, (user) => user.profiles)
-  user: User;
-
-  @OneToMany(() => Notification, (notification) => notification.profile, {
+  @ManyToOne(() => User, (user) => user.profiles, {
     onDelete: 'CASCADE',
   })
+  user: User;
+
+  @OneToMany(() => Notification, (notification) => notification.profile)
   notifications: Notification[];
   @OneToMany(() => Favorite, (favorite) => favorite.profile)
   favorites: Favorite[];
@@ -29,9 +29,7 @@ export class Profile {
   @OneToMany(() => WatchHistory, (history) => history.profile)
   watchHistory: WatchHistory[];
 
-  @ManyToOne(() => Review, (review) => review.profile, {
-    onDelete: 'CASCADE',
-  })
+  @OneToMany(() => Review, (review) => review.profile)
   reviews: Review[];
   @Column()
   name: string;

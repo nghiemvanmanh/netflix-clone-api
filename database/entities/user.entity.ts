@@ -38,10 +38,10 @@ export class User {
   @ManyToOne(() => SubscriptionPlan)
   plan: SubscriptionPlan;
 
-  @OneToMany(() => Payment, (payment) => payment.user, { onDelete: 'CASCADE' })
+  @OneToMany(() => Payment, (payment) => payment.user)
   payments: Payment[];
 
-  @OneToMany(() => Profile, (profile) => profile.user, { onDelete: 'CASCADE' })
+  @OneToMany(() => Profile, (profile) => profile.user)
   profiles: Profile[];
 
   @CreateDateColumn({ type: 'timestamp' })

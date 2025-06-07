@@ -13,7 +13,9 @@ export class Notification {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => Profile, (profile) => profile.notifications)
+  @ManyToOne(() => Profile, (profile) => profile.notifications, {
+    onDelete: 'CASCADE',
+  })
   profile: Profile;
   @Column({ type: 'enum', enum: typeNotification })
   type: typeNotification;

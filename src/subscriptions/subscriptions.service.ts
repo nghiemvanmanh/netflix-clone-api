@@ -7,10 +7,10 @@ import { Repository } from 'typeorm';
 import { Payment } from 'database/entities/payment.entity';
 import { User } from 'database/entities/user.entity';
 import * as nodemailer from 'nodemailer';
-import * as escapeHtml from 'escape-html';
 import { MAILER_TOKEN } from 'src/mailer/mailer.providers';
 import { EnvService } from 'src/env/env.service';
 import * as jwt from 'jsonwebtoken';
+import { mailOptions_Subscriptions } from 'src/common/email-templates/email-subscriptions';
 @Injectable()
 export class SubscriptionsService {
   private stripe: Stripe;
@@ -64,39 +64,9 @@ export class SubscriptionsService {
     plan: SubscriptionPlan,
     payment: Payment,
   ) {
-    await this.transporter.sendMail({
-      from: `"Dịch vụ của chúng tôi" <${this.env.get('EMAIL_USER')}>`,
-      to: user.email,
-      subject: 'Xác nhận thanh toán thành công',
-      html: `
-      <div style="font-family: Arial, sans-serif; color: #333;">
-        <h2 style="color: #2c3e50;">Xác nhận thanh toán thành công</h2>
-        <p>Xin chào <strong>${escapeHtml(user.email)}</strong>,</p>
-        <p>Cảm ơn bạn đã tin tưởng và sử dụng dịch vụ của chúng tôi. Chúng tôi rất vui thông báo rằng bạn đã thanh toán thành công gói Netflop <strong>${escapeHtml(plan.name)}</strong>.</p>
-
-        <table style="width: 100%; max-width: 400px; border-collapse: collapse; margin: 20px 0;">
-          <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;"><strong>Số tiền:</strong></td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${payment.amount} ${payment.currency.toUpperCase()}</td>
-          </tr>
-          <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;"><strong>Thời gian:</strong></td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${new Date().toLocaleString('vi-VN')}</td>
-          </tr>
-        </table>
-
-        <p>Nếu bạn có bất kỳ câu hỏi hoặc cần hỗ trợ, xin vui lòng liên hệ với chúng tôi qua email này.</p>
-
-        <p style="margin-top: 30px;">Trân trọng,<br /><strong>Đội ngũ hỗ trợ khách hàng</strong></p>
-
-        <hr style="border: none; border-top: 1px solid #eee; margin: 40px 0;" />
-
-        <small style="color: #999;">
-          Đây là email tự động, vui lòng không trả lời email này.
-        </small>
-      </div>
-    `,
-    });
+    await this.transporter.sendMail(
+      mailOptions_Subscriptions(user, plan, payment),
+    );
   }
 
   async createCheckoutSession(data: {
@@ -219,6 +189,41 @@ export class SubscriptionsService {
         }`,
       );
     }
+  }
+
+  async handleCompletedCheckoutSession(session: Stripe.Checkout.Session) {
+    const { userId, planId } = session.metadata;
+    if (!userId || !planId) return;
+
+    const [user, plan] = await Promise.all([
+      this.userRepository.findOne({ where: { id: userId } }),
+      this.subscriptionRepository.findOne({ where: { id: planId } }),
+    ]);
+
+    const existing = await this.paymentRepository.findOne({
+      where: { stripeSessionId: session.id },
+    });
+    if (existing) return; // tránh xử lý lại nếu webhook bị gửi nhiều lần
+
+    const paymentIntent = session.payment_intent as Stripe.PaymentIntent;
+    const payment = this.paymentRepository.create({
+      user,
+      plan,
+      amount: session.amount_total,
+      currency: session.currency,
+      status: session.payment_status,
+      stripeSessionId: session.id,
+      stripePaymentIntentId: paymentIntent?.id,
+      paymentMethod: paymentIntent?.payment_method_types?.[0],
+    });
+
+    user.isActive = true;
+    await Promise.all([
+      this.paymentRepository.save(payment),
+      this.userRepository.save(user),
+    ]);
+
+    await this.sendPaymentConfirmationEmail(user, plan, payment);
   }
 
   async create(createSubscriptionPlanDto: CreateSubscriptionPlanDto[]) {

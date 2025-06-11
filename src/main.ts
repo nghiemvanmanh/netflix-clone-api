@@ -8,12 +8,16 @@ import { AppModule } from './app/app.module';
 import { RefreshToken } from 'database/entities/refresh-token.entity';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { EnvService } from './env/env.service';
+import { RawBodyMiddleware } from './middleware/raw-body.middleware';
+import { Repository } from 'typeorm';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const env = app.get(EnvService);
   const reflector = app.get(Reflector);
   const jwtService = app.get(JwtService);
-  const refreshTokenRepository = app.get(getRepositoryToken(RefreshToken));
+  const refreshTokenRepository = app.get<Repository<RefreshToken>>(
+    getRepositoryToken(RefreshToken),
+  );
   const prefix = env.get('PREFIX');
   app.setGlobalPrefix(prefix); // Thiết lập tiền tố toàn cục cho các route
   app.useGlobalGuards(
@@ -37,6 +41,11 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document); // Thư mục /api sẽ chứa swagger UI
-  await app.listen(env.get('PORT'), '0.0.0.0');
+  app.use(new RawBodyMiddleware().use.bind(new RawBodyMiddleware()));
+  await app.listen(env.get('PORT'), '0.0.0.0').catch((err) => {
+    console.error('Error starting server:', err);
+  });
 }
-bootstrap();
+void bootstrap().catch((err) => {
+  console.error('Error during bootstrap:', err);
+});

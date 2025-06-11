@@ -51,7 +51,7 @@ export class UsersService {
     await this.verificationRepository.save(codeEntity);
 
     const mailOptions = {
-      from: this.env.get('EMAIL_USER'),
+      from: `"Dịch vụ của chúng tôi" <${this.env.get('EMAIL_USER')}>`,
       to: user.email,
       subject: 'Mã xác minh đăng ký tài khoản Netflop',
       html: `

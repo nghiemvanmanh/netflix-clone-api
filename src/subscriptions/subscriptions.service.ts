@@ -11,6 +11,8 @@ import { MAILER_TOKEN } from 'src/mailer/mailer.providers';
 import { EnvService } from 'src/env/env.service';
 import * as jwt from 'jsonwebtoken';
 import { mailOptions_Subscriptions } from 'src/common/email-templates/email-subscriptions';
+import { Cron, CronExpression } from '@nestjs/schedule';
+import * as dayjs from 'dayjs';
 @Injectable()
 export class SubscriptionsService {
   private stripe: Stripe;
@@ -164,10 +166,14 @@ export class SubscriptionsService {
         paymentMethod: paymentIntent?.payment_method_types?.[0] ?? null,
       });
 
-      user.isActive = true;
       await Promise.all([
         this.paymentRepository.save(payment),
-        this.userRepository.save(user),
+        this.userRepository.save({
+          ...user,
+          isActive: true,
+          planId: plan.id,
+          updatedAt: new Date(),
+        }),
       ]);
 
       await this.sendPaymentConfirmationEmail(user, plan, payment);
@@ -233,5 +239,26 @@ export class SubscriptionsService {
 
   async findAll() {
     return await this.subscriptionRepository.find();
+  }
+
+  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
+  async checkExpiredSubscriptions() {
+    const now = dayjs();
+
+    const allPlans = await this.subscriptionRepository.find();
+    const expiredPlans = allPlans.filter(
+      (plan) => now.diff(dayjs(plan.createdAt), 'month') >= 1,
+    );
+
+    if (expiredPlans.length > 0) {
+      const planIds = expiredPlans.map((p) => p.id);
+
+      await this.userRepository
+        .createQueryBuilder()
+        .update(User)
+        .set({ isActive: false })
+        .where('planId IN (:...planIds)', { planIds })
+        .execute();
+    }
   }
 }

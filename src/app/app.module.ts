@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 import { UsersModule } from 'src/users/users.module';
 import { AuthModule } from 'src/auth/auth.module';
 import { dataSource } from 'typeorm.config';
@@ -18,12 +18,13 @@ import { SubscriptionsModule } from 'src/subscriptions/subscriptions.module';
 import { mailerProvider } from 'src/mailer/mailer.providers';
 import { EnvModule } from 'src/env/env.module';
 import { ReviewsModule } from 'src/reviews/reviews.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
     EnvModule,
     TypeOrmModule.forRootAsync({
-      imports: [ConfigModule.forRoot()],
+      imports: [ConfigModule.forRoot(), ScheduleModule.forRoot()],
       useFactory: () => dataSource.options,
     }),
 

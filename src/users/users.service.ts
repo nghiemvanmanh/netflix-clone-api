@@ -18,6 +18,7 @@ import { EnvService } from 'src/env/env.service';
 import { addMinutes, addHours, isAfter, parseISO } from 'date-fns';
 import { mailOptions_Register } from 'src/common/email-templates/email-register';
 import { MAILER_TOKEN } from 'src/mailer/mailer.providers';
+import { Cron, CronExpression } from '@nestjs/schedule';
 @Injectable()
 export class UsersService {
   constructor(
@@ -116,5 +117,17 @@ export class UsersService {
     }
     await this.userRepository.delete(id);
     return 'Deleted successfully';
+  }
+
+  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
+  async checkExpiredUsers() {
+    const now = new Date();
+    await this.userRepository
+      .createQueryBuilder()
+      .update()
+      .set({ isActive: false })
+      .where('isActive = :active', { active: true })
+      .andWhere('isExpired < :now', { now })
+      .execute();
   }
 }

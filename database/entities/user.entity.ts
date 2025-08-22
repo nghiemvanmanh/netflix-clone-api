@@ -44,6 +44,9 @@ export class User {
   @OneToMany(() => Profile, (profile) => profile.user)
   profiles: Profile[];
 
+  @Column({ type: 'timestamp', nullable: true })
+  isExpired?: Date;
+
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
   @UpdateDateColumn({ type: 'timestamp' })

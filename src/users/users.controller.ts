@@ -57,4 +57,10 @@ export class UsersController {
   async delete(@Param('id') id: string) {
     return await this.usersService.delete(id);
   }
+
+  @Public()
+  @Post('test')
+  test() {
+    return this.usersService.checkExpiredUsers();
+  }
 }

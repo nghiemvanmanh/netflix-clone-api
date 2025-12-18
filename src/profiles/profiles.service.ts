@@ -39,11 +39,11 @@ export class ProfilesService {
       where: { user: { id: userId } },
       relations: ['user'],
     });
-    if (!profiles || profiles.length === 0) {
-      throw new NotFoundException(
-        `Hồ sơ với người dùng ${userId} không tìm thấy`,
-      );
-    }
+    // if (!profiles || profiles.length === 0) {
+    //   throw new NotFoundException(
+    //     `Hồ sơ với người dùng ${userId} không tìm thấy`,
+    //   );
+    // }
     return profiles;
   }
 }

@@ -76,7 +76,7 @@ export class SubscriptionsService {
     planName: string;
     planId: string;
     amount: number;
-  }): Promise<{ sessionId: string }> {
+  }): Promise<{ url: string; sessionId: string }> {
     try {
       const { priceId, userId, planName, planId, amount } = data;
       // Tạo session Stripe
@@ -99,8 +99,7 @@ export class SubscriptionsService {
         success_url: `${this.env.get('FRONTEND_URL')}/subscription/success?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${this.env.get('FRONTEND_URL')}/subscription/cancel`,
       });
-
-      return { sessionId: session.id };
+      return { url: session.url, sessionId: session.id };
     } catch (error) {
       throw new BadRequestException(
         `Failed to create checkout session: ${error}`,

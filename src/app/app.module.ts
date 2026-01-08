@@ -19,9 +19,12 @@ import { mailerProvider } from 'src/mailer/mailer.providers';
 import { EnvModule } from 'src/env/env.module';
 import { ReviewsModule } from 'src/reviews/reviews.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import { SentryGlobalFilter, SentryModule } from '@sentry/nestjs/setup';
+import { APP_FILTER } from '@nestjs/core';
 
 @Module({
   imports: [
+    SentryModule.forRoot(),
     EnvModule,
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule.forRoot(), ScheduleModule.forRoot()],
@@ -42,7 +45,14 @@ import { ScheduleModule } from '@nestjs/schedule';
     ReviewsModule,
   ],
   controllers: [AppController],
-  providers: [AppService, mailerProvider],
+  providers: [
+    {
+      provide: APP_FILTER,
+      useClass: SentryGlobalFilter,
+    },
+    AppService,
+    mailerProvider,
+  ],
   exports: [mailerProvider],
 })
 export class AppModule {}

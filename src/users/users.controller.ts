@@ -61,6 +61,7 @@ export class UsersController {
   @Public()
   @Post('test')
   test() {
-    return this.usersService.checkExpiredUsers();
+    console.log(process.env.SENTRY_DSN);
+    throw new Error('Test Sentry NestJS error');
   }
 }
